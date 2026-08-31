@@ -1,0 +1,334 @@
+stages:
+  - verify
+  - test
+  - analyse
+  - build
+  - security
+  - e2e
+  - gate
+  - modernize
+
+variables:
+  COMPOSER_CACHE_DIR: "$CI_PROJECT_DIR/.cache/composer"
+  npm_config_cache: "$CI_PROJECT_DIR/.cache/npm"
+  PLAYWRIGHT_VERSION: "1.62.0"
+
+.php_job:
+  image: php:${PHP_VERSION}-cli-bookworm
+  before_script:
+    - apt-get update -yqq
+    - apt-get install -yqq --no-install-recommends git unzip curl libonig-dev libxml2-dev libsqlite3-dev default-libmysqlclient-dev libzip-dev
+    - docker-php-ext-install -j"$(nproc)" pdo_sqlite pdo_mysql mbstring dom xml xmlwriter
+    - curl -fsSL https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+    - composer install --no-interaction --no-progress --prefer-dist
+    - cp .env.example .env
+    - php artisan key:generate --force
+  cache:
+    key:
+      files:
+        - composer.lock
+    paths:
+      - .cache/composer/
+
+.mysql_test:
+  services:
+    - name: mysql:8.4
+      alias: mysql
+  variables:
+    MYSQL_DATABASE: internship_testing
+    MYSQL_ROOT_PASSWORD: testing_root_password
+    DB_CONNECTION: mysql
+    DB_HOST: mysql
+    DB_PORT: "3306"
+    DB_DATABASE: internship_testing
+    DB_USERNAME: root
+    DB_PASSWORD: testing_root_password
+    CACHE_STORE: array
+    SESSION_DRIVER: database
+    QUEUE_CONNECTION: sync
+
+syntax_and_bootstrap:
+  extends: .php_job
+  stage: verify
+  variables:
+    PHP_VERSION: "8.4"
+    CACHE_STORE: array
+  script:
+    - php scripts/dev/doctor.php
+    - php scripts/verify.php
+    - php scripts/p8-testing-audit.php
+    - php artisan route:list --except-vendor
+    - CACHE_STORE=array php artisan schedule:list
+
+backend_tests:
+  extends: .php_job
+  stage: test
+  parallel:
+    matrix:
+      - PHP_VERSION: ["8.4", "8.5"]
+  script:
+    - mkdir -p test-results
+    - php artisan test --log-junit test-results/phpunit.xml
+    - php vendor/bin/pint --test
+  artifacts:
+    when: always
+    expire_in: 14 days
+    paths:
+      - test-results/phpunit.xml
+    reports:
+      junit: test-results/phpunit.xml
+
+migration_from_zero:
+  extends: .php_job
+  stage: test
+  variables:
+    PHP_VERSION: "8.4"
+    DB_CONNECTION: sqlite
+    DB_DATABASE: "$CI_PROJECT_DIR/database/database.sqlite"
+    CACHE_STORE: array
+  script:
+    - touch database/database.sqlite
+    - php artisan migrate:fresh --force
+    - php artisan migrate:status
+
+mysql_integration:
+  extends:
+    - .php_job
+    - .mysql_test
+  stage: test
+  variables:
+    PHP_VERSION: "8.4"
+    MYSQL_DATABASE: internship_testing
+    MYSQL_ROOT_PASSWORD: testing_root_password
+    DB_CONNECTION: mysql
+    DB_HOST: mysql
+    DB_PORT: "3306"
+    DB_DATABASE: internship_testing
+    DB_USERNAME: root
+    DB_PASSWORD: testing_root_password
+    CACHE_STORE: array
+    SESSION_DRIVER: database
+  before_script:
+    - apt-get update -yqq
+    - apt-get install -yqq --no-install-recommends git unzip curl libonig-dev libxml2-dev libsqlite3-dev default-libmysqlclient-dev libzip-dev default-mysql-client
+    - docker-php-ext-install -j"$(nproc)" pdo_sqlite pdo_mysql mbstring dom xml xmlwriter
+    - curl -fsSL https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+    - composer install --no-interaction --no-progress --prefer-dist
+    - cp .env.example .env
+    - php artisan key:generate --force
+    - for i in $(seq 1 60); do mysqladmin ping -hmysql -uroot -ptesting_root_password --silent && break; sleep 2; done
+    - mysqladmin ping -hmysql -uroot -ptesting_root_password --silent
+  script:
+    - mkdir -p test-results
+    - php artisan migrate:fresh --force
+    - php artisan db:seed --class=TestingSeeder --force
+    - php artisan performance:check
+    - php artisan test --log-junit test-results/mysql-phpunit.xml
+  artifacts:
+    when: always
+    expire_in: 14 days
+    paths:
+      - test-results/mysql-phpunit.xml
+    reports:
+      junit: test-results/mysql-phpunit.xml
+
+performance_regression:
+  extends: .php_job
+  stage: test
+  variables:
+    PHP_VERSION: "8.4"
+    DB_CONNECTION: sqlite
+    DB_DATABASE: "$CI_PROJECT_DIR/database/database.sqlite"
+    CACHE_STORE: array
+    PERFORMANCE_PREVENT_LAZY_LOADING: "false"
+  script:
+    - touch database/database.sqlite
+    - php artisan migrate:fresh --force
+    - php scripts/performance-audit.php
+    - php artisan performance:check
+    - php artisan test --filter=ActiveApprovalAggregationTest
+
+larastan:
+  extends: .php_job
+  stage: analyse
+  variables:
+    PHP_VERSION: "8.4"
+  script:
+    - bash scripts/ci/install-larastan.sh
+    - php vendor/bin/phpstan analyse --configuration=phpstan.neon.dist --memory-limit=1G
+  # Still informational until Larastan is committed to composer.lock by the
+  # online dependency-modernization step. It is not part of P8's green gate.
+  allow_failure: true
+
+frontend_build:
+  image: node:22.16-bookworm-slim
+  stage: build
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .cache/npm/
+  script:
+    - npm ci --no-audit --no-fund
+    - npm run build
+
+composer_audit:
+  extends: .php_job
+  stage: security
+  variables:
+    PHP_VERSION: "8.4"
+  script:
+    - composer audit --locked --no-interaction
+
+npm_audit:
+  image: node:22.16-bookworm-slim
+  stage: security
+  script:
+    - npm audit --audit-level=high
+
+p8_release_source_audit:
+  extends: .php_job
+  stage: verify
+  variables:
+    PHP_VERSION: "8.4"
+    CACHE_STORE: array
+  script:
+    - php scripts/release/release-candidate-audit.php
+    - php scripts/release/upload-security-audit.php
+    - php scripts/p8-testing-audit.php
+
+.e2e_php_job:
+  image: php:8.4-cli-bookworm
+  extends: .mysql_test
+  stage: e2e
+  before_script:
+    - apt-get update -yqq
+    - apt-get install -yqq --no-install-recommends git unzip curl xz-utils libonig-dev libxml2-dev default-libmysqlclient-dev libzip-dev default-mysql-client
+    - docker-php-ext-install -j"$(nproc)" pdo_mysql mbstring dom xml xmlwriter
+    - curl -fsSL https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+    - composer install --no-interaction --no-progress --prefer-dist
+    - curl -fsSLO "https://nodejs.org/dist/v22.16.0/node-v22.16.0-linux-x64.tar.xz"
+    - tar -xJf node-v22.16.0-linux-x64.tar.xz -C /usr/local --strip-components=1
+    - node --version && npm --version
+    - cp .env.example .env
+    - php artisan key:generate --force
+    - for i in $(seq 1 60); do mysqladmin ping -hmysql -uroot -ptesting_root_password --silent && break; sleep 2; done
+    - mysqladmin ping -hmysql -uroot -ptesting_root_password --silent
+    - APP_ENV=testing php artisan migrate:fresh --force
+    - APP_ENV=testing php artisan db:seed --class=TestingSeeder --force
+    - npm ci --no-audit --no-fund
+    - npm run build
+    - npm install --no-save --package-lock=false "@playwright/test@${PLAYWRIGHT_VERSION}"
+  variables:
+    MYSQL_DATABASE: internship_testing
+    MYSQL_ROOT_PASSWORD: testing_root_password
+    DB_CONNECTION: mysql
+    DB_HOST: mysql
+    DB_PORT: "3306"
+    DB_DATABASE: internship_testing
+    DB_USERNAME: root
+    DB_PASSWORD: testing_root_password
+    APP_ENV: testing
+    APP_DEBUG: "false"
+    CACHE_STORE: array
+    SESSION_DRIVER: database
+    QUEUE_CONNECTION: sync
+    PLAYWRIGHT_BASE_URL: "http://127.0.0.1:8000"
+
+playwright_chromium:
+  extends: .e2e_php_job
+  script:
+    - npx playwright install --with-deps chromium
+    - npx playwright test --project=chromium
+  artifacts:
+    when: always
+    expire_in: 14 days
+    access: developer
+    paths:
+      - playwright-report/
+      - test-results/
+    reports:
+      junit: test-results/playwright-junit.xml
+
+playwright_cross_browser:
+  extends: .e2e_php_job
+  script:
+    - npx playwright install --with-deps chromium firefox webkit
+    - npx playwright test --project=firefox --project=webkit --project=mobile-chrome
+  artifacts:
+    when: always
+    expire_in: 14 days
+    access: developer
+    paths:
+      - playwright-report/
+      - test-results/
+    reports:
+      junit: test-results/playwright-junit.xml
+
+ci_green_gate:
+  image: alpine:3.22
+  stage: gate
+  needs:
+    - syntax_and_bootstrap
+    - backend_tests
+    - migration_from_zero
+    - mysql_integration
+    - performance_regression
+    - frontend_build
+    - composer_audit
+    - npm_audit
+    - p8_release_source_audit
+    - playwright_chromium
+    - playwright_cross_browser
+  script:
+    - echo "P8 mandatory quality gates passed. CI GREEN."
+
+# Dependency-major rehearsals stay manual and do not affect the P8 testing
+# pipeline. Production/staging deployment jobs are intentionally out of scope.
+p4_laravel13_rehearsal:
+  extends: .php_job
+  stage: modernize
+  variables:
+    PHP_VERSION: "8.5"
+    CACHE_STORE: array
+  when: manual
+  allow_failure: true
+  script:
+    - composer require php:'^8.4' laravel/framework:'^13.17' laravel/tinker:'^3.0' barryvdh/laravel-dompdf:'^3.1.2' --no-update
+    - composer require --dev phpunit/phpunit:'^12.5.12' laravel/pint:'^1.27' --no-update
+    - composer config minimum-stability stable
+    - composer config prefer-stable true
+    - composer update --with-all-dependencies --no-interaction --no-progress
+    - php artisan test
+    - php vendor/bin/pint --test
+    - composer audit --locked --no-interaction
+
+p4_vite8_rehearsal:
+  image: node:22.16-bookworm-slim
+  stage: modernize
+  when: manual
+  allow_failure: true
+  script:
+    - npm ci --no-audit --no-fund
+    - npm install --no-save --package-lock=false vite@'^8.0.0' laravel-vite-plugin@'^3.1' concurrently@'^10.0.3'
+    - npm run build
+
+p4_filament5_rehearsal:
+  extends: .php_job
+  stage: modernize
+  variables:
+    PHP_VERSION: "8.5"
+    CACHE_STORE: array
+  when: manual
+  allow_failure: true
+  script:
+    - composer require php:'^8.4' laravel/framework:'^13.17' laravel/tinker:'^3.0' barryvdh/laravel-dompdf:'^3.1.2' --no-update
+    - composer require --dev phpunit/phpunit:'^12.5.12' laravel/pint:'^1.27' --no-update
+    - composer update --with-all-dependencies --no-interaction --no-progress
+    - composer require filament/upgrade:'^5.0' -W --dev --no-interaction
+    - vendor/bin/filament-v5
+    - composer require filament/filament:'^5.0' -W --no-update
+    - composer update --with-all-dependencies --no-interaction --no-progress
+    - php artisan test
+    - php vendor/bin/pint --test

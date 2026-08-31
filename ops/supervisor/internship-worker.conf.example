@@ -1,0 +1,12 @@
+[program:internship-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/internship-management/artisan queue:work database --queue=default --sleep=3 --tries=3 --backoff=5 --timeout=80 --max-time=3600
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=www-data
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/var/www/internship-management/storage/logs/worker.log
+stopwaitsecs=90

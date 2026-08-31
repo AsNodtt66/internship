@@ -1,0 +1,5 @@
+@extends('errors.minimal')
+@section('title', 'Gangguan server')
+@section('code', '500')
+@section('heading', 'Terjadi gangguan pada sistem')
+@section('message', 'Permintaan belum dapat diproses. Coba kembali beberapa saat lagi atau hubungi pengelola sistem bila masalah berlanjut.')

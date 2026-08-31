@@ -1,0 +1,5 @@
+@extends('errors.minimal')
+@section('title', 'Akses ditolak')
+@section('code', '403')
+@section('heading', 'Anda tidak memiliki akses')
+@section('message', 'Akun Anda tidak memiliki izin untuk membuka halaman atau menjalankan tindakan ini.')

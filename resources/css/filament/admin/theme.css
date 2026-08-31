@@ -1,0 +1,924 @@
+@import '/vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament';
+@source '../../../../resources/views/filament';
+
+@font-face {
+    font-family: 'Inter';
+    src: local('Inter');
+}
+
+:root {
+    --sipkl-bg: #F8FAFC;
+    --sipkl-card: #FFFFFF;
+    --sipkl-primary: #1B5A96;
+    --sipkl-primary-dark: #0E2C4B;
+    --sipkl-primary-light: #2B73B9;
+    --sipkl-gradient: linear-gradient(160deg, var(--sipkl-primary-dark) 0%, var(--sipkl-primary) 55%, var(--sipkl-primary-light) 100%);
+    --sipkl-accent: #DDA53C;
+    --sipkl-success: #15803D;
+    --sipkl-danger: #B91C1C;
+    --sipkl-muted: #64748B;
+}
+
+body {
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    background-color: var(--sipkl-bg);
+}
+
+/* Sidebar memakai palet biru korporat yang sama dengan portal publik. */
+.fi-sidebar {
+    background: var(--sipkl-gradient);
+}
+
+.fi-sidebar-header {
+    background-color: var(--sipkl-primary-dark);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.fi-sidebar-group-label,
+.fi-sidebar-item-label {
+    color: #FFFFFF;
+}
+
+.fi-sidebar-item-icon {
+    color: #FFFFFF;
+}
+
+.fi-sidebar-item-btn {
+    color: #FFFFFF;
+    border-radius: 10px;
+    transition: background-color 150ms ease, transform 150ms ease;
+}
+
+.fi-sidebar-item-btn:hover {
+    background-color: rgba(255, 255, 255, 0.14);
+}
+
+.fi-sidebar-item.fi-active .fi-sidebar-item-btn {
+    background-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+.fi-sidebar-item.fi-active .fi-sidebar-item-label,
+.fi-sidebar-item.fi-active .fi-sidebar-item-icon {
+    color: #FFFFFF !important;
+}
+
+/* Brand dua baris (lihat render hook SIDEBAR_START di AdminPanelProvider).
+   Default fi-logo Filament hanya disembunyikan DI SIDEBAR (karena kita
+   ganti dengan .sipkl-brand berlogo asli di bawah) -- di halaman
+   Login/Register (SimplePage) fi-logo TETAP tampil dengan logo asli lewat
+   ->brandLogo() di panel provider. */
+.fi-sidebar .fi-logo {
+    display: none;
+}
+
+.sipkl-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px;
+}
+
+.sipkl-brand-logo,
+.sipkl-brand-mark {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 8px;
+    object-fit: contain;
+    background: #FFFFFF;
+    color: var(--sipkl-primary-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.sipkl-brand-title {
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.sipkl-brand-subtitle {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.25;
+}
+
+/* Kartu memakai radius dan elevasi ringan tanpa animasi gerak yang tidak perlu. */
+.fi-section,
+.fi-in-card,
+.fi-wi-stats-overview-stat {
+    background-color: var(--sipkl-card);
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    transition: box-shadow 150ms ease;
+}
+
+.fi-section:hover,
+.fi-wi-stats-overview-stat:hover {
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.07);
+}
+
+
+/* Topbar */
+.fi-topbar nav {
+    background-color: var(--sipkl-card);
+    border-bottom: 1px solid #E5E7EB;
+}
+
+/* Timeline Pengajuan */
+.sipkl-timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sipkl-timeline-item {
+    display: flex;
+    gap: 12px;
+    padding-bottom: 16px;
+    position: relative;
+}
+
+.sipkl-timeline-item:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: 24px;
+    bottom: 0;
+    width: 2px;
+    background: #EAF2FA;
+}
+
+.sipkl-timeline-dot {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    border-radius: 50%;
+    background: var(--sipkl-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sipkl-timeline-check {
+    width: 14px;
+    height: 14px;
+    color: #FFFFFF;
+}
+
+.sipkl-timeline-title {
+    font-weight: 500;
+    color: var(--sipkl-primary);
+    margin: 0;
+}
+
+.sipkl-timeline-time {
+    font-size: 12px;
+    color: #6B7280;
+    margin: 2px 0 0;
+}
+
+/* Kartu sukses */
+.sipkl-success-card {
+    text-align: center;
+    padding: 24px 16px;
+}
+
+.sipkl-success-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 12px;
+    color: var(--sipkl-primary);
+}
+
+.sipkl-success-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--sipkl-primary);
+    margin: 0 0 4px;
+}
+
+.sipkl-success-desc {
+    color: #6B7280;
+    margin: 0 0 16px;
+}
+
+.sipkl-success-btn {
+    display: inline-block;
+    background: var(--sipkl-gradient);
+    color: #FFFFFF;
+    font-weight: 600;
+    padding: 10px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: filter 150ms ease;
+}
+
+.sipkl-success-btn:hover {
+    filter: brightness(0.92);
+    color: #FFFFFF;
+}
+
+/* ===== Dashboard Peserta ===== */
+.sipkl-peserta-header {
+    margin-bottom: 20px;
+}
+
+.sipkl-peserta-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--sipkl-primary);
+    margin: 0;
+}
+
+.sipkl-peserta-name {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--sipkl-primary);
+    margin: 2px 0 4px;
+}
+
+.sipkl-peserta-sub {
+    color: #6B7280;
+    margin: 0;
+}
+
+.sipkl-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    padding: 20px;
+    margin-top: 16px;
+}
+
+.sipkl-card-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 16px;
+}
+
+.sipkl-empty-state {
+    text-align: center;
+    color: #6B7280;
+}
+
+.sipkl-muted {
+    color: #6B7280;
+    font-size: 14px;
+}
+
+.sipkl-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.sipkl-stat-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    padding: 18px;
+}
+
+.sipkl-stat-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: #EAF2FA;
+    color: var(--sipkl-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.sipkl-stat-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.sipkl-stat-label {
+    font-size: 12px;
+    color: #6B7280;
+    margin: 0 0 4px;
+}
+
+.sipkl-stat-value {
+    font-size: 17px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+}
+
+.sipkl-stat-desc {
+    font-size: 12px;
+    color: #6B7280;
+    margin: 4px 0 0;
+}
+
+.sipkl-two-col {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: 16px;
+}
+
+.sipkl-two-col > .sipkl-card {
+    min-width: 0;
+}
+
+@media (max-width: 900px) {
+    .sipkl-two-col {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Stepper horizontal */
+.sipkl-stepper {
+    display: flex;
+    overflow-x: auto;
+    gap: 4px;
+    min-width: 0;
+}
+
+.sipkl-stepper-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    min-width: 96px;
+}
+
+.sipkl-stepper-line-wrap {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.sipkl-stepper-line {
+    flex: 1;
+    height: 2px;
+    background: #E5E7EB;
+}
+
+.sipkl-stepper-line.is-done {
+    background: var(--sipkl-primary);
+}
+
+.sipkl-stepper-line.is-transparent {
+    background: transparent;
+}
+
+.sipkl-stepper-dot {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    border-radius: 50%;
+    background: #E5E7EB;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sipkl-stepper-dot.is-done {
+    background: var(--sipkl-primary);
+}
+
+.sipkl-stepper-check {
+    width: 12px;
+    height: 12px;
+    color: #FFFFFF;
+}
+
+.sipkl-stepper-label {
+    display: block;
+    width: 96px;
+    margin-top: 8px;
+    font-size: 12px;
+    text-align: center;
+    color: #6B7280;
+    word-break: break-word;
+}
+
+.sipkl-stepper-label.is-done {
+    color: var(--sipkl-primary);
+    font-weight: 600;
+}
+
+.sipkl-stepper-date {
+    font-size: 11px;
+    color: #64748B;
+    margin-top: 2px;
+}
+
+/* Quick actions */
+.sipkl-quick-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sipkl-quick-action {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: #F8FAFC;
+    color: #111827;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background-color 150ms ease;
+}
+
+.sipkl-quick-action svg {
+    width: 20px;
+    height: 20px;
+    color: var(--sipkl-primary);
+    flex-shrink: 0;
+}
+
+.sipkl-quick-action:hover {
+    background: #EAF2FA;
+}
+
+/* Informasi terbaru */
+.sipkl-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sipkl-info-item {
+    display: flex;
+    gap: 12px;
+}
+
+.sipkl-info-icon {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 8px;
+    background: #EAF2FA;
+    color: var(--sipkl-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sipkl-info-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+.sipkl-info-text {
+    margin: 0;
+    font-size: 13px;
+    color: #111827;
+}
+
+.sipkl-info-time {
+    margin: 2px 0 0;
+    font-size: 11px;
+    color: #64748B;
+}
+
+.sipkl-link-btn {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--sipkl-primary);
+    text-decoration: none;
+}
+
+.sipkl-link-btn:hover {
+    text-decoration: underline;
+}
+
+.sipkl-footer {
+    text-align: center;
+    font-size: 12px;
+    color: #64748B;
+    margin: 32px 0 8px;
+    line-height: 1.6;
+}
+
+/* Tabel sederhana (Dokumen Saya, dll) */
+.sipkl-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.sipkl-table th {
+    text-align: left;
+    color: #6B7280;
+    font-weight: 600;
+    padding: 8px 10px;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.sipkl-table td {
+    padding: 10px;
+    border-bottom: 1px solid #F1F5F9;
+    color: #111827;
+}
+
+.sipkl-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.sipkl-badge-success { background: #DCFCE7; color: #166534; }
+.sipkl-badge-warning { background: #FEF3C7; color: #B45309; }
+.sipkl-badge-danger { background: #FEE2E2; color: #B91C1C; }
+/* ===== P5 usability & accessibility foundation ===== */
+.sipkl-eyebrow {
+    margin: 0 0 4px;
+    color: var(--sipkl-muted);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.sipkl-section-heading,
+.sipkl-card-heading-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.sipkl-section-title {
+    margin: 0;
+    color: #0F172A;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.sipkl-card-heading-row .sipkl-card-title {
+    margin-bottom: 0;
+}
+
+.sipkl-card-hint {
+    color: var(--sipkl-muted);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.sipkl-text-link,
+.sipkl-primary-action {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.sipkl-text-link {
+    color: var(--sipkl-primary);
+    padding: 8px 4px;
+}
+
+.sipkl-text-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.sipkl-primary-action {
+    margin-top: 16px;
+    padding: 10px 18px;
+    background: var(--sipkl-primary);
+    color: #FFFFFF;
+}
+
+.sipkl-primary-action:hover {
+    background: var(--sipkl-primary-dark);
+    color: #FFFFFF;
+}
+
+.sipkl-empty-state {
+    padding: 32px 20px;
+}
+
+.sipkl-empty-state > p {
+    max-width: 560px;
+    margin: 0 auto;
+}
+
+.sipkl-empty-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 12px;
+    padding: 10px;
+    border-radius: 14px;
+    background: #EAF2FA;
+    color: var(--sipkl-primary);
+}
+
+.sipkl-empty-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.sipkl-stat-card--status {
+    border-top: 3px solid var(--sipkl-primary);
+}
+
+.sipkl-stat-value--compact {
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+.sipkl-stat-desc {
+    line-height: 1.5;
+}
+
+.sipkl-stepper {
+    padding: 4px 2px 10px;
+    scrollbar-gutter: stable;
+    overscroll-behavior-inline: contain;
+}
+
+.sipkl-stepper-step {
+    list-style: none;
+}
+
+.sipkl-stepper-dot {
+    border: 2px solid #CBD5E1;
+    background: #FFFFFF;
+    color: #475569;
+}
+
+.sipkl-stepper-step.is-selesai .sipkl-stepper-dot {
+    border-color: var(--sipkl-success);
+    background: var(--sipkl-success);
+    color: #FFFFFF;
+}
+
+.sipkl-stepper-step.is-sedang_diproses .sipkl-stepper-dot {
+    border-color: var(--sipkl-primary);
+    background: #FFFFFF;
+    color: var(--sipkl-primary);
+    box-shadow: 0 0 0 4px #DBEAFE;
+}
+
+.sipkl-stepper-step.is-ditolak .sipkl-stepper-dot {
+    border-color: var(--sipkl-danger);
+    background: #FEF2F2;
+    color: var(--sipkl-danger);
+}
+
+.sipkl-stepper-marker {
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.sipkl-stepper-state {
+    margin-top: 3px;
+    color: var(--sipkl-muted);
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.35;
+    text-align: center;
+}
+
+.sipkl-stepper-step.is-sedang_diproses .sipkl-stepper-label,
+.sipkl-stepper-step.is-sedang_diproses .sipkl-stepper-state {
+    color: var(--sipkl-primary);
+    font-weight: 700;
+}
+
+.sipkl-stepper-step.is-selesai .sipkl-stepper-label {
+    color: #166534;
+    font-weight: 650;
+}
+
+.sipkl-stepper-step.is-ditolak .sipkl-stepper-label,
+.sipkl-stepper-step.is-ditolak .sipkl-stepper-state {
+    color: var(--sipkl-danger);
+    font-weight: 700;
+}
+
+.sipkl-quick-action {
+    min-height: 56px;
+    align-items: flex-start;
+    border: 1px solid #E2E8F0;
+    background: #FFFFFF;
+    font-size: 13px;
+}
+
+.sipkl-quick-action:hover {
+    border-color: #BFDBFE;
+    background: #F8FAFC;
+}
+
+.sipkl-quick-action strong,
+.sipkl-quick-action small {
+    display: block;
+}
+
+.sipkl-quick-action strong {
+    color: #0F172A;
+    font-weight: 650;
+    line-height: 1.35;
+}
+
+.sipkl-quick-action small {
+    margin-top: 2px;
+    color: var(--sipkl-muted);
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1.4;
+}
+
+.sipkl-info-item {
+    padding: 2px 0;
+}
+
+.sipkl-info-time {
+    color: var(--sipkl-muted);
+}
+
+.sipkl-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.sipkl-table {
+    min-width: 720px;
+}
+
+.sipkl-table th {
+    background: #F8FAFC;
+    color: #475569;
+}
+
+.sipkl-table tbody tr:hover {
+    background: #F8FAFC;
+}
+
+.sipkl-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.sipkl-quick-action:focus-visible,
+.sipkl-text-link:focus-visible,
+.sipkl-link-btn:focus-visible {
+    outline: 3px solid #0F172A;
+    outline-offset: 3px;
+}
+
+.sipkl-primary-action:focus-visible {
+    outline: 3px solid #FDE68A;
+    outline-offset: 3px;
+}
+
+.sipkl-brand:focus-visible,
+.fi-sidebar-item-btn:focus-visible {
+    outline: 3px solid #FDE68A;
+    outline-offset: 3px;
+}
+
+@media (max-width: 640px) {
+    .sipkl-section-heading,
+    .sipkl-card-heading-row {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .sipkl-card-hint {
+        display: none;
+    }
+
+    .sipkl-stat-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .sipkl-card,
+    .sipkl-stat-card {
+        border-radius: 14px;
+        padding: 16px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
+
+/* P5 — page-level wayfinding and notification accessibility. */
+.sipkl-section-heading-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.sipkl-section-description {
+    margin-top: .35rem;
+    max-width: 70ch;
+    color: var(--sipkl-muted, #64748B);
+    font-size: .9rem;
+    line-height: 1.6;
+}
+
+.sipkl-button-reset {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    padding: .5rem;
+    font: inherit;
+    cursor: pointer;
+}
+
+.sipkl-notification-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    border-inline-start: 3px solid transparent;
+}
+
+.sipkl-notification-item.is-unread {
+    border-inline-start-color: var(--sipkl-primary, #1B5A96);
+    background: #F8FAFC;
+}
+
+.sipkl-notification-item.is-read {
+    color: #475569;
+}
+
+.sipkl-notification-content {
+    display: flex;
+    min-width: 0;
+    gap: .75rem;
+}
+
+.sipkl-notification-title {
+    font-weight: 650;
+    color: #0F172A;
+}
+
+.sipkl-notification-state {
+    flex: 0 0 auto;
+    color: #64748B;
+    font-size: .78rem;
+}
+
+.sipkl-notification-read-action {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+    .sipkl-section-heading-row,
+    .sipkl-notification-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .sipkl-section-heading-row > .sipkl-text-link,
+    .sipkl-notification-read-action {
+        align-self: flex-start;
+    }
+}

@@ -1,0 +1,5 @@
+@extends('errors.minimal')
+@section('title', 'Halaman tidak ditemukan')
+@section('code', '404')
+@section('heading', 'Halaman tidak ditemukan')
+@section('message', 'Alamat yang Anda buka tidak tersedia, sudah dipindahkan, atau tidak dapat diakses.')

@@ -1,0 +1,92 @@
+# Documentation Index
+
+Dokumentasi disusun agar developer baru dapat memilih jalur sesuai pekerjaannya.
+
+## Saya baru pertama kali menjalankan project
+
+1. [QUICK-START.md](QUICK-START.md)
+2. [CONFIGURATION.md](CONFIGURATION.md)
+3. [LOCAL-DEVELOPMENT.md](LOCAL-DEVELOPMENT.md)
+4. Jika error: [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
+
+## Saya ingin menjalankan project testing / CI
+
+1. [P8-PLAYWRIGHT-CI.md](P8-PLAYWRIGHT-CI.md)
+2. [TESTING.md](TESTING.md)
+3. [BUSINESS-RULES.md](BUSINESS-RULES.md)
+4. [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
+
+## Saya mengerjakan frontend / UI
+
+1. [FRONTEND-GUIDE.md](FRONTEND-GUIDE.md)
+2. [PROJECT-STRUCTURE.md](PROJECT-STRUCTURE.md)
+3. [ROLES-AND-PERMISSIONS.md](ROLES-AND-PERMISSIONS.md)
+4. [P5-UI-UX.md](P5-UI-UX.md)
+5. [ACCESSIBILITY.md](ACCESSIBILITY.md)
+6. [UI-COPY-GUIDE.md](UI-COPY-GUIDE.md)
+7. [USABILITY-TESTING.md](USABILITY-TESTING.md)
+8. [TESTING.md](TESTING.md)
+
+## Saya mengerjakan backend / business logic
+
+1. [BACKEND-GUIDE.md](BACKEND-GUIDE.md)
+2. [ARCHITECTURE.md](ARCHITECTURE.md)
+3. [BUSINESS-WORKFLOW.md](BUSINESS-WORKFLOW.md)
+4. [ROLES-AND-PERMISSIONS.md](ROLES-AND-PERMISSIONS.md)
+5. [TESTING.md](TESTING.md)
+
+## Saya mengaudit performance / database
+
+1. [P6-PERFORMANCE.md](P6-PERFORMANCE.md)
+2. [BACKEND-GUIDE.md](BACKEND-GUIDE.md)
+3. [TESTING.md](TESTING.md)
+4. [P2-OPERATIONS.md](P2-OPERATIONS.md)
+
+
+## Saya menyiapkan Release Candidate / production
+
+1. [P7-RELEASE-CANDIDATE.md](P7-RELEASE-CANDIDATE.md)
+2. [RELEASE-RUNBOOK.md](RELEASE-RUNBOOK.md)
+3. [STAGING-REHEARSAL.md](STAGING-REHEARSAL.md)
+4. [ASVS-VERIFICATION.md](ASVS-VERIFICATION.md)
+5. [LOAD-TESTING.md](LOAD-TESTING.md)
+6. [BACKUP-RESTORE-DRILL.md](BACKUP-RESTORE-DRILL.md)
+7. [BROWSER-ACCESSIBILITY-RC.md](BROWSER-ACCESSIBILITY-RC.md)
+8. [ROLLBACK-RUNBOOK.md](ROLLBACK-RUNBOOK.md)
+9. [VERIFICATION-P7.md](VERIFICATION-P7.md)
+
+## Saya mengelola server / deployment
+
+1. [DEPLOYMENT-CHECKLIST.md](DEPLOYMENT-CHECKLIST.md)
+2. [P2-OPERATIONS.md](P2-OPERATIONS.md)
+3. [PRODUCTION-HARDENING.md](PRODUCTION-HARDENING.md)
+4. [BACKUP-RESTORE.md](BACKUP-RESTORE.md)
+5. [CONFIGURATION.md](CONFIGURATION.md)
+
+## Saya melakukan security review
+
+1. [SECURITY-P0-P1.md](SECURITY-P0-P1.md)
+2. [PRODUCTION-HARDENING.md](PRODUCTION-HARDENING.md)
+3. [ASVS-MAPPING.md](ASVS-MAPPING.md)
+4. root [SECURITY.md](../SECURITY.md)
+
+## Upgrade dependency
+
+1. [P4-MODERNIZATION.md](P4-MODERNIZATION.md)
+2. [P4-LARAVEL-13.md](P4-LARAVEL-13.md)
+3. [P4-VITE-8.md](P4-VITE-8.md)
+4. [P4-FILAMENT-5.md](P4-FILAMENT-5.md)
+5. Historical readiness notes: [P2-UPGRADE-READINESS.md](P2-UPGRADE-READINESS.md)
+
+## Riwayat perubahan
+
+- [../CHANGELOG-P0-P1.md](../CHANGELOG-P0-P1.md)
+- [../CHANGELOG-P2.md](../CHANGELOG-P2.md)
+- [../CHANGELOG-P3.md](../CHANGELOG-P3.md)
+- [../CHANGELOG-P4.md](../CHANGELOG-P4.md)
+- [../CHANGELOG-P5.md](../CHANGELOG-P5.md)
+- [../CHANGELOG-P6.md](../CHANGELOG-P6.md)
+- [../CHANGELOG-P7.md](../CHANGELOG-P7.md)
+- [../CHANGELOG-P8.md](../CHANGELOG-P8.md)
+
+- [GitHub Actions CI](GITHUB-CI.md) — mandatory PHP/MySQL/frontend/Playwright green gates.

@@ -1,0 +1,5 @@
+@extends('errors.minimal')
+@section('title', 'Layanan sementara tidak tersedia')
+@section('code', '503')
+@section('heading', 'Layanan sementara tidak tersedia')
+@section('message', 'Sistem sedang dalam pemeliharaan atau layanan pendukung belum siap. Silakan coba kembali beberapa saat lagi.')

@@ -1,0 +1,322 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  APP_ENV: testing
+  APP_DEBUG: 'false'
+  LOG_CHANNEL: stack
+  CACHE_STORE: array
+  QUEUE_CONNECTION: sync
+  MAIL_MAILER: array
+  BCRYPT_ROUNDS: '4'
+  NODE_VERSION: '22.16.0'
+  PLAYWRIGHT_VERSION: '1.62.0'
+
+jobs:
+  source-quality:
+    name: Source quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: mbstring, dom, xml, xmlwriter, intl, fileinfo, pdo_sqlite
+          coverage: none
+          tools: composer:v2
+      - name: Install PHP dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+      - name: Prepare testing environment
+        run: |
+          cp .env.testing.example .env
+          sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
+          sed -i 's#^DB_DATABASE=.*#DB_DATABASE=:memory:#' .env
+          php artisan key:generate --force
+      - name: PHP syntax
+        run: find app bootstrap config database routes tests scripts -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Pint
+        run: php vendor/bin/pint --test
+      - name: Project audits
+        run: |
+          php scripts/p8-testing-audit.php
+          php scripts/ui-audit.php
+          php scripts/performance-audit.php
+          php scripts/release/release-candidate-audit.php
+          php scripts/release/upload-security-audit.php
+      - name: Composer security audit
+        run: composer audit --locked
+
+  backend-tests:
+    name: PHPUnit PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.4', '8.5']
+    steps:
+      - uses: actions/checkout@v6
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, dom, xml, xmlwriter, intl, fileinfo, pdo_sqlite
+          coverage: none
+          tools: composer:v2
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+      - name: Prepare SQLite test environment
+        run: |
+          cp .env.testing.example .env
+          sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
+          sed -i 's#^DB_DATABASE=.*#DB_DATABASE=:memory:#' .env
+          php artisan key:generate --force
+          mkdir -p test-results
+      - name: Run PHPUnit
+        run: php artisan test --log-junit test-results/phpunit-${{ matrix.php }}.xml
+      - uses: actions/upload-artifact@v5
+        if: ${{ !cancelled() }}
+        with:
+          name: phpunit-${{ matrix.php }}
+          path: test-results/phpunit-${{ matrix.php }}.xml
+          retention-days: 14
+
+  mysql-integration:
+    name: MySQL integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: internship_testing
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: internship_testing
+      DB_USERNAME: root
+      DB_PASSWORD: ''
+      SESSION_DRIVER: database
+    steps:
+      - uses: actions/checkout@v6
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: mbstring, dom, xml, xmlwriter, intl, fileinfo, pdo_mysql
+          coverage: none
+          tools: composer:v2
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+      - name: Prepare environment
+        run: |
+          cp .env.testing.example .env
+          php artisan key:generate --force
+          mkdir -p test-results
+      - name: Build database from zero
+        run: php artisan migrate:fresh --force
+      - name: Performance/index checks
+        run: php artisan performance:check
+      - name: Run MySQL PHPUnit suite
+        run: php artisan test --log-junit test-results/phpunit-mysql.xml
+      - uses: actions/upload-artifact@v5
+        if: ${{ !cancelled() }}
+        with:
+          name: phpunit-mysql
+          path: test-results/phpunit-mysql.xml
+          retention-days: 14
+
+  frontend-build:
+    name: Frontend build and audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - name: Install Node dependencies
+        run: npm ci --no-fund
+      - name: Build frontend
+        run: npm run build
+      - name: npm security audit
+        run: npm audit --audit-level=high
+
+  playwright-chromium:
+    name: Playwright Chromium
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: internship_testing
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: internship_testing
+      DB_USERNAME: root
+      DB_PASSWORD: ''
+      SESSION_DRIVER: database
+    steps:
+      - uses: actions/checkout@v6
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: mbstring, dom, xml, xmlwriter, intl, fileinfo, pdo_mysql
+          coverage: none
+          tools: composer:v2
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - name: Install application dependencies
+        run: |
+          composer install --prefer-dist --no-interaction --no-progress
+          npm ci --no-fund
+          npm install --no-save --ignore-scripts @playwright/test@${PLAYWRIGHT_VERSION}
+      - name: Build assets
+        run: npm run build
+      - name: Prepare deterministic E2E database
+        run: |
+          cp .env.testing.example .env
+          php artisan key:generate --force
+          php artisan migrate:fresh --force
+          php artisan db:seed --class=TestingSeeder --force
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run Chromium E2E
+        run: npx playwright test --project=chromium
+      - uses: actions/upload-artifact@v5
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-chromium
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+
+  playwright-cross-browser:
+    name: Playwright Firefox WebKit Mobile
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: internship_testing
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: internship_testing
+      DB_USERNAME: root
+      DB_PASSWORD: ''
+      SESSION_DRIVER: database
+    steps:
+      - uses: actions/checkout@v6
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: mbstring, dom, xml, xmlwriter, intl, fileinfo, pdo_mysql
+          coverage: none
+          tools: composer:v2
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - name: Install application dependencies
+        run: |
+          composer install --prefer-dist --no-interaction --no-progress
+          npm ci --no-fund
+          npm install --no-save --ignore-scripts @playwright/test@${PLAYWRIGHT_VERSION}
+      - name: Build assets
+        run: npm run build
+      - name: Prepare deterministic E2E database
+        run: |
+          cp .env.testing.example .env
+          php artisan key:generate --force
+          php artisan migrate:fresh --force
+          php artisan db:seed --class=TestingSeeder --force
+      - name: Install browsers
+        run: npx playwright install --with-deps firefox webkit chromium
+      - name: Run cross-browser E2E
+        run: npx playwright test --project=firefox --project=webkit --project=mobile-chrome
+      - uses: actions/upload-artifact@v5
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-cross-browser
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+
+  ci-green:
+    name: CI Green Gate
+    if: ${{ always() }}
+    needs:
+      - source-quality
+      - backend-tests
+      - mysql-integration
+      - frontend-build
+      - playwright-chromium
+      - playwright-cross-browser
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require every mandatory job to pass
+        env:
+          SOURCE: ${{ needs.source-quality.result }}
+          BACKEND: ${{ needs.backend-tests.result }}
+          MYSQL: ${{ needs.mysql-integration.result }}
+          FRONTEND: ${{ needs.frontend-build.result }}
+          CHROMIUM: ${{ needs.playwright-chromium.result }}
+          CROSS_BROWSER: ${{ needs.playwright-cross-browser.result }}
+        run: |
+          printf '%s\n' \
+            "source-quality=$SOURCE" \
+            "backend-tests=$BACKEND" \
+            "mysql-integration=$MYSQL" \
+            "frontend-build=$FRONTEND" \
+            "playwright-chromium=$CHROMIUM" \
+            "playwright-cross-browser=$CROSS_BROWSER"
+          test "$SOURCE" = success
+          test "$BACKEND" = success
+          test "$MYSQL" = success
+          test "$FRONTEND" = success
+          test "$CHROMIUM" = success
+          test "$CROSS_BROWSER" = success
