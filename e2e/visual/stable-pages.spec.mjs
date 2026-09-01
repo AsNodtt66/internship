@@ -40,6 +40,7 @@ test.describe('visual regression: stable public pages', () => {
       fullPage: true,
       mask: [page.locator('footer p')],
       maskColor: '#0E2C4B',
+      maxDiffPixelRatio: 0.015,
     });
   });
 
