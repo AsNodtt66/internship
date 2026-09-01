@@ -50,6 +50,8 @@ test.describe('visual regression: stable public pages', () => {
 
     await expect(page).toHaveScreenshot('participant-login-desktop.png', {
       fullPage: true,
+      // Native font rasterisation differs slightly between Windows and Linux CI.
+      maxDiffPixelRatio: 0.015,
     });
   });
 });
