@@ -31,7 +31,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: mbstring, dom, xml, xmlwriter, intl, fileinfo, zip, pdo_sqlite
+          extensions: bcmath, curl, mbstring, dom, xml, xmlwriter, intl, fileinfo, zip, pdo_sqlite
           coverage: none
           tools: composer:v2
       - name: Install PHP dependencies
@@ -72,7 +72,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: mbstring, dom, xml, xmlwriter, intl, fileinfo, zip, pdo_sqlite
+          extensions: bcmath, curl, mbstring, dom, xml, xmlwriter, intl, fileinfo, zip, pdo_sqlite
           coverage: none
           tools: composer:v2
       - name: Install dependencies
@@ -124,7 +124,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: mbstring, dom, xml, xmlwriter, intl, fileinfo, zip, pdo_mysql
+          extensions: bcmath, curl, mbstring, dom, xml, xmlwriter, intl, fileinfo, zip, pdo_mysql
           coverage: none
           tools: composer:v2
       - name: Install dependencies
@@ -157,7 +157,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: mbstring, dom, xml, xmlwriter, intl, fileinfo, zip, pdo_sqlite
+          extensions: bcmath, curl, mbstring, dom, xml, xmlwriter, intl, fileinfo, zip, pdo_sqlite
           coverage: pcov
           tools: composer:v2
       - name: Install dependencies
@@ -188,7 +188,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: mbstring, dom, xml, xmlwriter, intl, fileinfo, zip, pdo_sqlite
+          extensions: bcmath, curl, mbstring, dom, xml, xmlwriter, intl, fileinfo, zip, pdo_sqlite
           coverage: pcov
           tools: composer:v2
       - name: Install dependencies
@@ -221,6 +221,8 @@ jobs:
           cache: npm
       - name: Install Node dependencies
         run: npm ci --no-fund
+      - name: Prepare frontend environment
+        run: cp .env.testing.example .env
       - name: Build frontend
         run: npm run build
       - name: npm security audit
@@ -256,7 +258,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: mbstring, dom, xml, xmlwriter, intl, fileinfo, zip, pdo_mysql
+          extensions: bcmath, curl, mbstring, dom, xml, xmlwriter, intl, fileinfo, zip, pdo_mysql
           coverage: none
           tools: composer:v2
       - uses: actions/setup-node@v6
@@ -325,7 +327,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: mbstring, dom, xml, xmlwriter, intl, fileinfo, zip, pdo_mysql
+          extensions: bcmath, curl, mbstring, dom, xml, xmlwriter, intl, fileinfo, zip, pdo_mysql
           coverage: none
           tools: composer:v2
       - uses: actions/setup-node@v6
