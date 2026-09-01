@@ -156,6 +156,22 @@ php artisan db:seed
 
 Seeder demo hanya diizinkan pada `local` atau `testing`.
 
+### Akun demo per role
+
+Seeder memakai satu password yang Anda tetapkan melalui `SEED_DEFAULT_PASSWORD`. Password itu tidak disimpan di dokumentasi atau repository. Gunakan hanya pada lingkungan lokal/testing.
+
+| Role | Email login | Kegunaan UAT |
+| --- | --- | --- |
+| General Manager | `gm@krebetbaru.co.id` | Approval akhir disposisi. |
+| Kepala Bagian SDM | `kabagsdm@krebetbaru.co.id` | Approval tahap SDM. |
+| Staff SDM | `staffsdm@krebetbaru.co.id` | Disposisi awal dan administrasi. |
+| PIC PKL/Penelitian | `pic@krebetbaru.co.id` | Verifikasi dokumen, rekap, dan surat balasan. |
+| Kepala Bagian tujuan | `kabag.akuntansi@krebetbaru.co.id` | Konfirmasi penempatan di unit tujuan. |
+| Pembimbing lapangan | `pembimbing@krebetbaru.co.id` | Pembimbingan dan penilaian peserta. |
+| Peserta | `peserta@gmail.com` | Portal peserta, pengajuan, dan perpanjangan. |
+
+Panel internal menggunakan `/admin`. Portal peserta tersedia di `/peserta`.
+
 ## 6. Verifikasi setup
 
 ```bash
