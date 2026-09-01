@@ -41,8 +41,18 @@ jobs:
           cp .env.testing.example .env
           sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
           sed -i 's#^DB_DATABASE=.*#DB_DATABASE=:memory:#' .env
-          php artisan key:generate --force
-          php artisan package:discover --ansi
+          if ! output="$(php artisan key:generate --force 2>&1)"; then
+            printf '%s\n' "$output"
+            printf '::error title=Laravel key generation failed::%s\n' "$(printf '%s' "$output" | tr '\n' ' ')"
+            exit 1
+          fi
+          printf '%s\n' "$output"
+          if ! output="$(php artisan package:discover --ansi 2>&1)"; then
+            printf '%s\n' "$output"
+            printf '::error title=Laravel package discovery failed::%s\n' "$(printf '%s' "$output" | tr '\n' ' ')"
+            exit 1
+          fi
+          printf '%s\n' "$output"
       - name: PHP syntax
         run: find app bootstrap config database routes tests scripts -type f -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Pint
@@ -224,7 +234,13 @@ jobs:
       - name: Prepare frontend environment
         run: cp .env.testing.example .env
       - name: Build frontend
-        run: npm run build
+        run: |
+          if ! output="$(npm run build 2>&1)"; then
+            printf '%s\n' "$output"
+            printf '::error title=Frontend build failed::%s\n' "$(printf '%s' "$output" | tr '\n' ' ')"
+            exit 1
+          fi
+          printf '%s\n' "$output"
       - name: npm security audit
         run: npm audit --audit-level=high
 
