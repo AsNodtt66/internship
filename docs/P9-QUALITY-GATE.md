@@ -4,7 +4,7 @@ Dokumen ini adalah catatan bukti untuk kualitas P9. Status di bawah hanya menyat
 
 ## Keputusan saat ini
 
-**Siap untuk commit kandidat lokal, belum siap dinyatakan rilis.** Semua gate lokal yang dapat dijalankan lulus. Coverage dan mutation tetap BLOCKED secara lokal karena driver tidak tersedia, sehingga statusnya bergantung pada job CI ber-PCOV pada SHA kandidat yang sama.
+**Rilis P9 ditutup pada SHA `743413962e3e1689b441d2915fa6180524c1c938`.** Semua gate GitHub Actions pada SHA tersebut lulus. Keterbatasan driver coverage lokal tetap dicatat sebagai batas lingkungan lokal, bukan kegagalan CI.
 
 ## Bukti yang tersedia
 
@@ -15,10 +15,10 @@ Dokumen ini adalah catatan bukti untuk kualitas P9. Status di bawah hanya menyat
 | Chromium kritikal | PASS | 44 eksekusi `@critical` dalam tiga pengulangan, 1,9 menit tanpa retry. |
 | Chromium penuh | PASS | `npm run test:e2e:chromium`: 37 test, 1,3 menit. |
 | Firefox, WebKit, mobile Chrome | PASS | `npm run test:e2e:cross-browser`: 91 test, 4 skip visual Chromium-only, 3,2 menit. |
-| Coverage PHP | BLOCKED lokal | `composer test:coverage` berhenti pada `No code coverage driver available`; job CI PCOV wajib menghasilkan artefak. |
-| Mutation testing | BLOCKED lokal | Infection berhenti karena PCOV/phpdbg/Xdebug tidak tersedia; job CI PCOV wajib menghasilkan MSI. |
+| Coverage PHP | PASS CI / BLOCKED lokal | Driver lokal tidak tersedia; job PCOV CI lulus pada SHA rilis. |
+| Mutation testing | PASS CI / BLOCKED lokal | Driver lokal tidak tersedia; job Infection ber-PCOV CI lulus pada SHA rilis. |
 | Accessibility dan visual | PASS | Axe Chromium lulus 12 test; baseline landing dan login peserta direview lalu Chromium penuh lulus. |
-| GitHub Actions pada SHA kandidat | PENDING | Belum ada kandidat yang di-push. |
+| GitHub Actions pada SHA rilis | PASS | Run `33457482624`: source quality, PHPUnit 8.3/8.4, MySQL, coverage, mutation, Chromium, Firefox/WebKit/mobile, frontend, dan aggregate gate semuanya lulus. |
 
 ## Urutan kerja yang wajib
 
