@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('visual regression: stable public pages', () => {
-  test.beforeEach(async ({ browserName }) => {
-    test.skip(browserName !== 'chromium', 'Visual baselines are maintained for Chromium only.');
+  test.beforeEach(async ({}, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium', 'Visual baselines are maintained for the Chromium desktop project only.');
   });
 
   test.use({
