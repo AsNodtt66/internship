@@ -309,7 +309,13 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Run Chromium E2E
-        run: npx playwright test --project=chromium
+        run: |
+          if ! output="$(npx playwright test --project=chromium 2>&1)"; then
+            printf '%s\n' "$output"
+            printf '::error title=Chromium E2E failed::%s\n' "$(printf '%s' "$output" | tr '\n' ' ')"
+            exit 1
+          fi
+          printf '%s\n' "$output"
       - name: Run critical flake check
         run: npx playwright test --project=chromium --grep @critical --repeat-each=3
       - name: Run Axe accessibility checks
@@ -379,7 +385,13 @@ jobs:
       - name: Install browsers
         run: npx playwright install --with-deps firefox webkit chromium
       - name: Run cross-browser E2E
-        run: npx playwright test --project=firefox --project=webkit --project=mobile-chrome
+        run: |
+          if ! output="$(npx playwright test --project=firefox --project=webkit --project=mobile-chrome 2>&1)"; then
+            printf '%s\n' "$output"
+            printf '::error title=Cross-browser E2E failed::%s\n' "$(printf '%s' "$output" | tr '\n' ' ')"
+            exit 1
+          fi
+          printf '%s\n' "$output"
       - uses: actions/upload-artifact@v5
         if: ${{ !cancelled() }}
         with:
