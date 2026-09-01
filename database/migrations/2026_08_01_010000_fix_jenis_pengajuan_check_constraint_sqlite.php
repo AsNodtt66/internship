@@ -49,8 +49,11 @@ return new class extends Migration
         DB::statement('UPDATE sqlite_master SET sql = ? WHERE type = "table" AND name = "pengajuans"', [$sqlBaru]);
         DB::statement('PRAGMA writable_schema = 0');
 
-        // Wajib supaya SQLite membaca ulang skema yang baru saja diubah.
-        DB::reconnect();
+        // Reconnect is required for file-backed SQLite, but it destroys an
+        // in-memory test database and its migration ledger.
+        if (DB::connection()->getDatabaseName() !== ':memory:') {
+            DB::reconnect();
+        }
         DB::statement('PRAGMA integrity_check');
     }
 
@@ -72,7 +75,9 @@ return new class extends Migration
         DB::statement('UPDATE sqlite_master SET sql = ? WHERE type = "table" AND name = "pengajuans"', [$sqlLama]);
         DB::statement('PRAGMA writable_schema = 0');
 
-        DB::reconnect();
+        if (DB::connection()->getDatabaseName() !== ':memory:') {
+            DB::reconnect();
+        }
         DB::statement('PRAGMA integrity_check');
     }
 };

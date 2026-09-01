@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Pengajuan;
 use App\Models\RiwayatStatus;
 use App\Support\Authorization\PengajuanAccess;
 use Filament\Widgets\Widget;
@@ -34,13 +35,13 @@ class RecentActivityWidget extends Widget
         }
 
         return RiwayatStatus::with(['pengajuan.peserta.user', 'changedBy'])
-            ->whereHas('pengajuan', fn ($query) => PengajuanAccess::scope($query, $user))
+            ->whereIn('pengajuan_id', PengajuanAccess::scope(Pengajuan::query(), $user)->select('id'))
             ->latest()
             ->limit(5)
             ->get()
             ->map(fn (RiwayatStatus $riwayat) => [
                 'waktu' => $riwayat->created_at,
-                'peserta' => $riwayat->pengajuan?->peserta?->user?->name ?? 'Peserta',
+                'peserta' => $riwayat->pengajuan?->peserta?->user->name ?? 'Peserta',
                 'keterangan' => $riwayat->keterangan
                     ?? "Status berubah menjadi {$riwayat->status_baru}",
             ])

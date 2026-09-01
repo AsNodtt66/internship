@@ -2,14 +2,16 @@
 
 namespace App\Filament\Resources\Bagians;
 
-use App\Filament\Resources\Bagians\Pages;
 use App\Models\Bagian;
 use Filament\Actions;
 use Filament\Forms\Components;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class BagianResource extends Resource
 {
@@ -53,7 +55,7 @@ class BagianResource extends Resource
                         // tidak boleh dihapus -- tampilkan pesan yang jelas ke user,
                         // bukan biarkan error SQL mentah muncul di layar.
                         if ($record->pengajuans()->exists()) {
-                            \Filament\Notifications\Notification::make()
+                            Notification::make()
                                 ->title('Bagian tidak bisa dihapus')
                                 ->body('Bagian ini masih dipakai sebagai bagian tujuan di satu atau lebih data pengajuan. Pindahkan/ubah dulu data pengajuan yang terkait sebelum menghapus bagian ini.')
                                 ->danger()
@@ -68,21 +70,25 @@ class BagianResource extends Resource
             ->toolbarActions([
                 Actions\BulkActionGroup::make([
                     Actions\DeleteBulkAction::make()
-                        ->action(function (\Illuminate\Support\Collection $records) {
-                            // One aggregate query for the whole bulk selection instead of
-                            // one EXISTS query per Bagian.
-                            $records->loadCount('pengajuans');
-                            $terpakai = $records->filter(fn (Bagian $b) => $b->pengajuans_count > 0);
+                        ->fetchSelectedRecords()
+                        ->action(function (Collection $records): void {
+                            // Reload the selected identifiers as Bagian models with one
+                            // aggregate count query; Filament may otherwise inject a base collection.
+                            $bagians = Bagian::query()
+                                ->whereKey($records->modelKeys())
+                                ->withCount('pengajuans')
+                                ->get();
+                            $terpakai = $bagians->filter(fn (Bagian $bagian): bool => $bagian->pengajuans_count > 0);
 
                             if ($terpakai->isNotEmpty()) {
-                                \Filament\Notifications\Notification::make()
+                                Notification::make()
                                     ->title('Sebagian bagian tidak bisa dihapus')
-                                    ->body('Bagian berikut masih dipakai di data pengajuan, jadi dilewati: ' . $terpakai->pluck('nama_bagian')->join(', '))
+                                    ->body('Bagian berikut masih dipakai di data pengajuan, jadi dilewati: '.$terpakai->pluck('nama_bagian')->join(', '))
                                     ->warning()
                                     ->send();
                             }
 
-                            $records->reject(fn (Bagian $b) => $b->pengajuans_count > 0)
+                            $bagians->reject(fn (Bagian $bagian): bool => $bagian->pengajuans_count > 0)
                                 ->each->delete();
                         }),
                 ]),
@@ -91,15 +97,15 @@ class BagianResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return \Illuminate\Support\Facades\Auth::user()?->role?->slug === 'pic';
+        return Auth::user()?->role?->slug === 'pic';
     }
 
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListBagians::route('/'),
+            'index' => Pages\ListBagians::route('/'),
             'create' => Pages\CreateBagian::route('/create'),
-            'edit'   => Pages\EditBagian::route('/{record}/edit'),
+            'edit' => Pages\EditBagian::route('/{record}/edit'),
         ];
     }
 }

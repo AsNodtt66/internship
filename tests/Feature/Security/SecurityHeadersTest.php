@@ -2,10 +2,13 @@
 
 namespace Tests\Feature\Security;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class SecurityHeadersTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_default_security_headers_are_present(): void
     {
         $response = $this->get('/');
@@ -24,8 +27,7 @@ class SecurityHeadersTest extends TestCase
         $this->get('/')
             ->assertHeaderMissing('Strict-Transport-Security');
 
-        $this->withServerVariables(['HTTPS' => 'on'])
-            ->get('/')
+        $this->get('https://localhost/')
             ->assertHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
     }
 

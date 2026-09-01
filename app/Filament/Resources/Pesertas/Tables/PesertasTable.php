@@ -24,7 +24,6 @@ class PesertasTable
             ])
             ->recordActions([
                 EditAction::make(),
-            ])
-;
+            ]);
     }
 }

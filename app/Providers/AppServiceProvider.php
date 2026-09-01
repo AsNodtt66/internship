@@ -15,10 +15,10 @@ use Filament\Forms\Components\FileUpload;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
-use Illuminate\Database\Connection;
-use Illuminate\Database\Events\QueryExecuted;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Http\Request;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Events\QueueBusy;
@@ -92,7 +92,7 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(Failed::class, function (Failed $event): void {
             Log::channel('operations')->warning('auth.login_failed', [
                 'guard' => $event->guard,
-                'user_id' => $event->user?->getAuthIdentifier(),
+                'user_id' => $event->user->getAuthIdentifier(),
                 'credential_type' => array_key_exists('nip', $event->credentials) ? 'nip' : 'email',
                 'request_id' => app()->runningInConsole() ? null : request()->attributes->get('request_id'),
             ]);
@@ -101,7 +101,7 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(Logout::class, function (Logout $event): void {
             Log::channel('operations')->info('auth.logout', [
                 'guard' => $event->guard,
-                'user_id' => $event->user?->getAuthIdentifier(),
+                'user_id' => $event->user->getAuthIdentifier(),
                 'request_id' => app()->runningInConsole() ? null : request()->attributes->get('request_id'),
             ]);
         });
@@ -113,7 +113,7 @@ class AppServiceProvider extends ServiceProvider
             Log::channel('operations')->error('queue.job_failed', [
                 'connection' => $event->connectionName,
                 'job_id' => $event->job->getJobId(),
-                'job' => method_exists($event->job, 'resolveName') ? $event->job->resolveName() : $event->job->getName(),
+                'job' => $event->job->resolveName(),
                 'exception' => $event->exception::class,
             ]);
         });
@@ -132,6 +132,7 @@ class AppServiceProvider extends ServiceProvider
             ]);
         });
     }
+
     private function configurePerformanceMonitoring(): void
     {
         if ((bool) config('performance.prevent_lazy_loading', false)) {
@@ -155,5 +156,4 @@ class AppServiceProvider extends ServiceProvider
             }
         );
     }
-
 }

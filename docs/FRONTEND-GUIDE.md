@@ -234,3 +234,5 @@ npm run test:e2e:critical
 ```
 
 Sebelum merge perubahan UI besar, jalankan `npm run test:e2e`. Playwright memakai browser nyata; jangan mengganti test backend policy dengan browser assertions.
+
+P9 menambahkan `npm run test:e2e:a11y` dan `npm run test:e2e:visual` untuk halaman yang bernilai tinggi. Rincian scope dan aturan snapshot ada di [P9 Accessibility Testing](P9-ACCESSIBILITY-TESTING.md) dan [P9 Visual Regression](P9-VISUAL-REGRESSION.md).

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Pengajuans;
 
-use App\Filament\Resources\Pengajuans\Pages;
 use App\Filament\Resources\Pengajuans\Schemas\PengajuanInfolist;
 use App\Filament\Resources\Pengajuans\Tables\PengajuansTable;
 use App\Models\Pengajuan;
@@ -15,6 +14,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
+/** @extends resource<Pengajuan> */
 class PengajuanResource extends Resource
 {
     protected static ?string $model = Pengajuan::class;
@@ -33,6 +33,8 @@ class PengajuanResource extends Resource
      * - pic/staff_sdm/kabag_sdm/gm: lihat semua pengajuan.
      * - kepala_bagian: hanya pengajuan yang bagian tujuannya dia pimpin.
      * - pembimbing_lapangan: hanya pengajuan yang dia bimbing.
+     *
+     * @return Builder<Pengajuan>
      */
     public static function getEloquentQuery(): Builder
     {

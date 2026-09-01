@@ -171,3 +171,21 @@ private documents disk salah konfigurasi
 ```
 
 Jangan “memperbaiki” gate dengan menurunkan requirement hanya agar status hijau. Perbaiki environment/root cause atau dokumentasikan waiver dengan alasan dan reviewer.
+
+## Coverage P9 tidak dapat berjalan
+
+`composer test:coverage` memerlukan PCOV atau Xdebug. Periksa modul aktif:
+
+```powershell
+php -m | Select-String 'pcov|xdebug'
+```
+
+```bash
+php -m | grep -E 'pcov|xdebug'
+```
+
+Jika keduanya tidak ada, jangan mengklaim coverage lulus. Gunakan job CI PCOV atau aktifkan salah satu driver pada environment lokal.
+
+## Playwright gagal dan menghasilkan artefak
+
+Periksa `playwright-report/` dan `test-results/` terlebih dahulu. Trace, screenshot, dan video menunjukkan halaman serta locator terakhir yang dipakai. Jangan menaikkan retry atau menambahkan waktu tunggu tetap sebelum penyebabnya diketahui. Panduan lengkap ada di [P9 Flaky Tests](P9-FLAKY-TESTS.md).

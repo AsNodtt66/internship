@@ -11,9 +11,9 @@ return new class extends Migration
         Schema::create('approval_workflows', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pengajuan_id')->constrained('pengajuans')->cascadeOnDelete();
-           $table->unsignedTinyInteger('urutan'); // 1=GM, 2=Kepala Bagian SDM, 3=Staff SDM
-$table->foreignId('penandatangan_id')->nullable()->constrained('users')->nullOnDelete();
-$table->enum('status', ['menunggu', 'ditandatangani'])->default('menunggu');
+            $table->unsignedTinyInteger('urutan'); // 1=GM, 2=Kepala Bagian SDM, 3=Staff SDM
+            $table->foreignId('penandatangan_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->enum('status', ['menunggu', 'ditandatangani'])->default('menunggu');
             $table->text('catatan')->nullable();
             $table->timestamp('diproses_at')->nullable();
             $table->timestamps();

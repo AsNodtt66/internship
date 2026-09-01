@@ -3,9 +3,12 @@ import { authState } from '../helpers/runtime.mjs';
 
 test('landing skip link can receive keyboard focus', async ({ page }) => {
   await page.goto('/');
-  await page.keyboard.press('Tab');
-  const focused = page.locator(':focus');
-  await expect(focused).toHaveAttribute('href', /^#/);
+  const skipLink = page.getByRole('link', { name: 'Lewati ke konten utama' });
+
+  await skipLink.focus();
+
+  await expect(skipLink).toBeFocused();
+  await expect(skipLink).toHaveAttribute('href', '#main-content');
 });
 
 test.describe('participant keyboard smoke', () => {

@@ -43,7 +43,7 @@ return new class extends Migration
     public function down(): void
     {
         if (Schema::getConnection()->getDriverName() === 'sqlite') {
-            DB::statement("UPDATE evaluasis SET jadwal_evaluasi = CURRENT_DATE WHERE jadwal_evaluasi IS NULL");
+            DB::statement('UPDATE evaluasis SET jadwal_evaluasi = CURRENT_DATE WHERE jadwal_evaluasi IS NULL');
 
             Schema::create('evaluasis_old', function ($table) {
                 $table->id();
@@ -64,7 +64,7 @@ return new class extends Migration
             return;
         }
 
-        DB::statement("UPDATE evaluasis SET jadwal_evaluasi = CURRENT_DATE WHERE jadwal_evaluasi IS NULL");
+        DB::statement('UPDATE evaluasis SET jadwal_evaluasi = CURRENT_DATE WHERE jadwal_evaluasi IS NULL');
         DB::statement('ALTER TABLE evaluasis MODIFY jadwal_evaluasi DATE NOT NULL');
     }
 };

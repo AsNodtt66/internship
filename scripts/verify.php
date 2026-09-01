@@ -12,10 +12,12 @@ function run(string $label, string $command): bool
 
     if ($exitCode !== 0) {
         fwrite(STDERR, "[FAIL] {$label} (exit {$exitCode})\n");
+
         return false;
     }
 
     echo "[OK] {$label}\n";
+
     return true;
 }
 

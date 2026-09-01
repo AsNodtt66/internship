@@ -34,6 +34,7 @@ class Evaluasi extends Model
         'checklist_persiapan' => 'array',
     ];
 
+    /** @return BelongsTo<Pengajuan, $this> */
     public function pengajuan(): BelongsTo
     {
         return $this->belongsTo(Pengajuan::class);
@@ -44,6 +45,7 @@ class Evaluasi extends Model
      * (opsional). Untuk nama tampilan, lebih baik pakai
      * $evaluasi->pengajuan->penugasanPembimbing->nama_tampil.
      */
+    /** @return BelongsTo<User, $this> */
     public function pembimbing(): BelongsTo
     {
         return $this->belongsTo(User::class, 'pembimbing_id');
@@ -52,11 +54,13 @@ class Evaluasi extends Model
     /**
      * PIC PKL/Penelitian yang menginput nilai akhir ke sistem.
      */
+    /** @return BelongsTo<User, $this> */
     public function dinilaiOleh(): BelongsTo
     {
         return $this->belongsTo(User::class, 'dinilai_oleh');
     }
 
+    /** @return HasMany<FormulirPenilaian, $this> */
     public function formulirPenilaians(): HasMany
     {
         return $this->hasMany(FormulirPenilaian::class);

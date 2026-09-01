@@ -19,10 +19,7 @@ class PesertaPengajuanStatusChartWidget extends ChartWidget
 
     protected static ?int $sort = 2;
 
-    protected int|string|array $columnSpan = [
-        'default' => 'full',
-        'lg' => 1,
-    ];
+    protected int|string|array $columnSpan = 'full';
 
     /**
      * Label & warna per status -- urutan array ini yang menentukan urutan

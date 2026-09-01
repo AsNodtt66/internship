@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\PembimbingLapangans;
 
 use App\Enums\RoleSlug;
-use App\Filament\Resources\PembimbingLapangans\Pages;
 use App\Models\PembimbingLapangan;
 use App\Services\PengajuanWorkflowService;
 use BackedEnum;
@@ -124,7 +123,6 @@ class PembimbingLapanganResource extends Resource
     {
         return in_array(Auth::user()?->role?->slug, ['pic', 'kepala_bagian'], true);
     }
-
 
     public static function getPages(): array
     {

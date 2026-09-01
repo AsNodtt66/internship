@@ -1,92 +1,77 @@
-# Documentation Index
+# Dokumentasi
 
-Dokumentasi disusun agar developer baru dapat memilih jalur sesuai pekerjaannya.
+Halaman ini adalah titik masuk dokumentasi proyek. Mulai dari tugas yang sedang Anda lakukan, bukan dari nama fase. Setiap dokumen berusaha menjawab satu kebutuhan dengan jelas dan menunjuk ke dokumen lanjutan bila diperlukan.
 
-## Saya baru pertama kali menjalankan project
+## Mulai di sini
 
-1. [QUICK-START.md](QUICK-START.md)
-2. [CONFIGURATION.md](CONFIGURATION.md)
-3. [LOCAL-DEVELOPMENT.md](LOCAL-DEVELOPMENT.md)
-4. Jika error: [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
+| Jika Anda perlu | Baca |
+| --- | --- |
+| Menjalankan aplikasi lokal | [Quick Start](QUICK-START.md) |
+| Memahami konfigurasi dan variabel lingkungan | [Configuration](CONFIGURATION.md) |
+| Menyiapkan cara kerja harian | [Local Development](LOCAL-DEVELOPMENT.md) |
+| Mengatasi masalah setup | [Troubleshooting](TROUBLESHOOTING.md) |
+| Memahami struktur kode | [Project Structure](PROJECT-STRUCTURE.md) |
 
-## Saya ingin menjalankan project testing / CI
+## Mengubah aplikasi dengan aman
 
-1. [P8-PLAYWRIGHT-CI.md](P8-PLAYWRIGHT-CI.md)
-2. [TESTING.md](TESTING.md)
-3. [BUSINESS-RULES.md](BUSINESS-RULES.md)
-4. [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
+- [Architecture](ARCHITECTURE.md), batas modul dan arah dependensi.
+- [Backend Guide](BACKEND-GUIDE.md), model, service, policy, dan database.
+- [Frontend Guide](FRONTEND-GUIDE.md), Filament, Livewire, Blade, dan Vite.
+- [Business Workflow](BUSINESS-WORKFLOW.md), alur pengajuan sampai evaluasi dan perpanjangan.
+- [Roles and Permissions](ROLES-AND-PERMISSIONS.md), batas akses tiap peran.
+- [Business Rules](BUSINESS-RULES.md), aturan yang tidak boleh berubah tanpa keputusan produk.
 
-## Saya mengerjakan frontend / UI
+## Menguji dan meninjau kualitas
 
-1. [FRONTEND-GUIDE.md](FRONTEND-GUIDE.md)
-2. [PROJECT-STRUCTURE.md](PROJECT-STRUCTURE.md)
-3. [ROLES-AND-PERMISSIONS.md](ROLES-AND-PERMISSIONS.md)
-4. [P5-UI-UX.md](P5-UI-UX.md)
-5. [ACCESSIBILITY.md](ACCESSIBILITY.md)
-6. [UI-COPY-GUIDE.md](UI-COPY-GUIDE.md)
-7. [USABILITY-TESTING.md](USABILITY-TESTING.md)
-8. [TESTING.md](TESTING.md)
+Mulai dari [P9 Test Strategy](P9-TEST-STRATEGY.md). Dokumen tersebut memberi urutan test lokal, coverage, mutation testing, Playwright, axe, visual regression, flake check, dan verifikasi SHA di GitHub Actions.
 
-## Saya mengerjakan backend / business logic
+- [P9 Quality Gate](P9-QUALITY-GATE.md), status bukti saat ini.
+- [P9 Baseline](P9-BASELINE.md), versi runtime dan hasil awal yang terukur.
+- [P9 Test Matrix](P9-TEST-MATRIX.md), risiko domain dan lapisan test.
+- [P9 Coverage](P9-COVERAGE.md), driver, artefak, dan aturan ratchet.
+- [P9 Mutation Testing](P9-MUTATION-TESTING.md), scope Infection dan cara menilai mutant.
+- [P9 Flaky Tests](P9-FLAKY-TESTS.md), pengulangan test kritikal dan artefak debug.
+- [P9 Accessibility Testing](P9-ACCESSIBILITY-TESTING.md) dan [P9 Visual Regression](P9-VISUAL-REGRESSION.md).
+- [P9 Differential Review](P9-DIFFERENTIAL-REVIEW.md) dan [P9 Ponytail Audit](P9-PONYTAIL-AUDIT.md).
+- [Testing](TESTING.md), test unit dan feature.
+- [P8 Playwright and CI](P8-PLAYWRIGHT-CI.md), database E2E dan artefak browser.
+- [Accessibility](ACCESSIBILITY.md), akses keyboard, kontras, dan kebutuhan pengguna.
+- [GitHub CI](GITHUB-CI.md), job, artifact, dan cara membaca hasil CI.
 
-1. [BACKEND-GUIDE.md](BACKEND-GUIDE.md)
-2. [ARCHITECTURE.md](ARCHITECTURE.md)
-3. [BUSINESS-WORKFLOW.md](BUSINESS-WORKFLOW.md)
-4. [ROLES-AND-PERMISSIONS.md](ROLES-AND-PERMISSIONS.md)
-5. [TESTING.md](TESTING.md)
+## Operasi dan rilis
 
-## Saya mengaudit performance / database
+- [Release Runbook](RELEASE-RUNBOOK.md)
+- [Deployment Checklist](DEPLOYMENT-CHECKLIST.md)
+- [Rollback Runbook](ROLLBACK-RUNBOOK.md)
+- [Backup and Restore](BACKUP-RESTORE.md)
+- [Production Hardening](PRODUCTION-HARDENING.md)
+- [P7 Release Candidate](P7-RELEASE-CANDIDATE.md)
 
-1. [P6-PERFORMANCE.md](P6-PERFORMANCE.md)
-2. [BACKEND-GUIDE.md](BACKEND-GUIDE.md)
-3. [TESTING.md](TESTING.md)
-4. [P2-OPERATIONS.md](P2-OPERATIONS.md)
+Dokumen rilis menjelaskan prosedur. Dokumen tersebut tidak membuktikan bahwa environment tertentu sudah siap. Bukti rilis harus berasal dari run yang benar-benar dilakukan pada SHA dan environment yang dimaksud.
 
+## Peta fase P1 sampai P9
 
-## Saya menyiapkan Release Candidate / production
+[Peta fase P1-P9](PHASES-P1-P9.md) merangkum tujuan, dokumen utama, dan batas status tiap fase. Gunakan sebagai orientasi historis, bukan sebagai pengganti runbook di atas.
 
-1. [P7-RELEASE-CANDIDATE.md](P7-RELEASE-CANDIDATE.md)
-2. [RELEASE-RUNBOOK.md](RELEASE-RUNBOOK.md)
-3. [STAGING-REHEARSAL.md](STAGING-REHEARSAL.md)
-4. [ASVS-VERIFICATION.md](ASVS-VERIFICATION.md)
-5. [LOAD-TESTING.md](LOAD-TESTING.md)
-6. [BACKUP-RESTORE-DRILL.md](BACKUP-RESTORE-DRILL.md)
-7. [BROWSER-ACCESSIBILITY-RC.md](BROWSER-ACCESSIBILITY-RC.md)
-8. [ROLLBACK-RUNBOOK.md](ROLLBACK-RUNBOOK.md)
-9. [VERIFICATION-P7.md](VERIFICATION-P7.md)
+## Dokumen referensi
 
-## Saya mengelola server / deployment
-
-1. [DEPLOYMENT-CHECKLIST.md](DEPLOYMENT-CHECKLIST.md)
-2. [P2-OPERATIONS.md](P2-OPERATIONS.md)
-3. [PRODUCTION-HARDENING.md](PRODUCTION-HARDENING.md)
-4. [BACKUP-RESTORE.md](BACKUP-RESTORE.md)
-5. [CONFIGURATION.md](CONFIGURATION.md)
-
-## Saya melakukan security review
-
-1. [SECURITY-P0-P1.md](SECURITY-P0-P1.md)
-2. [PRODUCTION-HARDENING.md](PRODUCTION-HARDENING.md)
-3. [ASVS-MAPPING.md](ASVS-MAPPING.md)
-4. root [SECURITY.md](../SECURITY.md)
-
-## Upgrade dependency
-
-1. [P4-MODERNIZATION.md](P4-MODERNIZATION.md)
-2. [P4-LARAVEL-13.md](P4-LARAVEL-13.md)
-3. [P4-VITE-8.md](P4-VITE-8.md)
-4. [P4-FILAMENT-5.md](P4-FILAMENT-5.md)
-5. Historical readiness notes: [P2-UPGRADE-READINESS.md](P2-UPGRADE-READINESS.md)
+- [Security P0-P1](SECURITY-P0-P1.md)
+- [ASVS Mapping](ASVS-MAPPING.md)
+- [Performance P6](P6-PERFORMANCE.md)
+- [UI/UX P5](P5-UI-UX.md)
+- [Modernization P4](P4-MODERNIZATION.md)
+- [References](REFERENCES.md)
 
 ## Riwayat perubahan
 
-- [../CHANGELOG-P0-P1.md](../CHANGELOG-P0-P1.md)
-- [../CHANGELOG-P2.md](../CHANGELOG-P2.md)
-- [../CHANGELOG-P3.md](../CHANGELOG-P3.md)
-- [../CHANGELOG-P4.md](../CHANGELOG-P4.md)
-- [../CHANGELOG-P5.md](../CHANGELOG-P5.md)
-- [../CHANGELOG-P6.md](../CHANGELOG-P6.md)
-- [../CHANGELOG-P7.md](../CHANGELOG-P7.md)
-- [../CHANGELOG-P8.md](../CHANGELOG-P8.md)
+- [P0/P1](../CHANGELOG-P0-P1.md)
+- [P2](../CHANGELOG-P2.md)
+- [P3](../CHANGELOG-P3.md)
+- [P4](../CHANGELOG-P4.md)
+- [P5](../CHANGELOG-P5.md)
+- [P6](../CHANGELOG-P6.md)
+- [P7](../CHANGELOG-P7.md)
+- [P8](../CHANGELOG-P8.md)
+- [P9](../CHANGELOG-P9.md)
 
-- [GitHub Actions CI](GITHUB-CI.md) — mandatory PHP/MySQL/frontend/Playwright green gates.
+Dokumen lama yang hanya diperlukan untuk konteks tersimpan di [legacy](legacy/).

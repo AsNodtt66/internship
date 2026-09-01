@@ -15,7 +15,7 @@ class StatsOverview extends BaseWidget
         // Hitung data real dari database
         $sedangBerjalan = Pengajuan::where('status', 'approved')->count();
         $menungguProses = Pengajuan::where('status', 'pending')->count();
-        $selesai        = Pengajuan::where('status', 'rejected')->count(); // atau kondisi selesai Anda
+        $selesai = Pengajuan::where('status', 'rejected')->count(); // atau kondisi selesai Anda
 
         return [
             Stat::make('Sedang Berjalan', $sedangBerjalan)

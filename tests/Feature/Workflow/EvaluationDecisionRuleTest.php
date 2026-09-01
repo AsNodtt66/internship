@@ -45,6 +45,8 @@ class EvaluationDecisionRuleTest extends TestCase
             'jadwal_evaluasi' => now()->toDateString(),
         ]);
 
+        $this->actingAs($pic);
+
         $service = app(PengajuanWorkflowService::class);
         $result = $service->inputHasilAkhirManual(
             $evaluasi,

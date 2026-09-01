@@ -36,5 +36,7 @@ yarn-error.log*
 # Playwright runtime artifacts (can contain authenticated session cookies)
 /playwright/.auth/*.json
 /playwright-report/
+/coverage/
+/infection-log/
 /test-results/
 /storage/framework/testing/e2e-fixtures.json

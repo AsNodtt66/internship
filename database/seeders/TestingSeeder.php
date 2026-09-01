@@ -9,6 +9,7 @@ use App\Models\Peserta;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 
@@ -133,7 +134,7 @@ class TestingSeeder extends Seeder
         file_put_contents($path, json_encode($fixture, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 
-    /** @param \Illuminate\Support\Collection<string,int> $roles */
+    /** @param Collection<string,int> $roles */
     private function user(
         string $name,
         string $email,

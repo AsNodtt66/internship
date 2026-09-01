@@ -128,7 +128,7 @@
                 </p>
                 <div class="flex flex-wrap items-center gap-4">
                     <a href="{{ route('filament.peserta.auth.register') }}"
-                       class="inline-flex items-center gap-2 px-6 py-3 rounded-md bg-[var(--gold)] text-[var(--cane-dark)] font-semibold hover:brightness-95 transition-colors on-dark">
+                       class="inline-flex items-center gap-2 px-6 py-3 rounded-md bg-[var(--gold)] !text-[var(--cane-dark)] font-semibold hover:brightness-95 transition-colors on-dark">
                         Buat Pengajuan
                         <span aria-hidden="true">&rarr;</span>
                     </a>
@@ -153,7 +153,7 @@
             @foreach ($statistik as $s)
                 <div>
                     <p class="font-display font-black text-3xl sm:text-4xl text-[var(--cane-dark)]">{{ $s['angka'] }}</p>
-                    <p class="text-xs sm:text-sm text-[var(--cane-dark)]/75 mt-1">{{ $s['label'] }}</p>
+                    <p class="text-xs sm:text-sm text-[var(--cane-dark)] mt-1">{{ $s['label'] }}</p>
                 </div>
             @endforeach
         </div>
@@ -194,7 +194,7 @@
             <h2 class="font-display font-bold text-3xl text-[var(--cane-dark)] mb-3 max-w-xl">
                 Tahapan pengajuan jelas dan dapat dipantau
             </h2>
-            <p class="text-sm text-[var(--ink)]/60 mb-14 max-w-lg">
+            <p class="text-sm text-[var(--ink)]/75 mb-14 max-w-lg">
                 Setiap pengajuan diproses bertahap. Status terbaru dapat dilihat langsung melalui akun peserta.
             </p>
 
@@ -261,7 +261,7 @@
                 <h2 class="font-display font-bold text-3xl text-[var(--cane-dark)] leading-tight">
                     Siapkan berkas ini sebelum mengajukan
                 </h2>
-                <p class="text-sm text-[var(--ink)]/60 mt-4">
+                <p class="text-sm text-[var(--ink)]/75 mt-4">
                     Berkas diunggah langsung saat pengajuan dibuat lewat akun peserta.
                 </p>
             </div>
@@ -322,7 +322,7 @@
             </p>
             <div class="flex items-center justify-center gap-4 flex-wrap">
                 <a href="{{ route('filament.peserta.auth.register') }}"
-                   class="inline-flex items-center gap-2 px-6 py-3 rounded-md bg-[var(--gold)] text-[var(--cane-dark)] font-semibold hover:brightness-95 transition">
+                   class="inline-flex items-center gap-2 px-6 py-3 rounded-md bg-[var(--gold)] !text-[var(--cane-dark)] font-semibold hover:brightness-95 transition">
                     Buat Akun Peserta
                 </a>
             </div>

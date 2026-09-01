@@ -32,7 +32,7 @@ class GmRecentActivityWidget extends Widget
             ->get()
             ->map(fn (RiwayatStatus $riwayat) => [
                 'waktu' => $riwayat->created_at,
-                'peserta' => $riwayat->pengajuan?->peserta?->user?->name ?? 'Peserta',
+                'peserta' => $riwayat->pengajuan?->peserta?->user->name ?? 'Peserta',
                 'pelaku' => $riwayat->changedBy?->name,
                 'keterangan' => $riwayat->keterangan
                     ?? "Status berubah dari {$riwayat->status_sebelumnya} menjadi {$riwayat->status_baru}",

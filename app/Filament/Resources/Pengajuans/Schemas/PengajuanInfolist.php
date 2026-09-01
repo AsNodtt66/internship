@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Pengajuans\Schemas;
 
+use App\Models\FormFieldDefinition;
+use App\Services\PengajuanWorkflowService;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
@@ -90,11 +92,11 @@ class PengajuanInfolist
             Section::make('Data Tambahan')
                 ->icon('heroicon-o-list-bullet')
                 ->columns(3)
-                ->visible(fn ($record) => \App\Models\FormFieldDefinition::whereIn('target', ['registrasi_peserta', 'pengajuan'])->exists())
+                ->visible(fn ($record) => FormFieldDefinition::whereIn('target', ['registrasi_peserta', 'pengajuan'])->exists())
                 ->schema(function ($record) {
                     // Gabungkan definisi field dari registrasi peserta + pengajuan,
                     // lalu ambil nilainya dari data_tambahan masing-masing tabel.
-                    $definisi = \App\Models\FormFieldDefinition::orderBy('urutan')->get();
+                    $definisi = FormFieldDefinition::orderBy('urutan')->get();
 
                     return $definisi->map(function ($field) use ($record) {
                         $sumber = $field->target === 'registrasi_peserta'
@@ -139,7 +141,7 @@ class PengajuanInfolist
                         ->schema([
                             TextEntry::make('urutan')
                                 ->label('Tahap')
-                                ->formatStateUsing(fn (int $state) => \App\Services\PengajuanWorkflowService::URUTAN_APPROVAL[$state] ?? $state),
+                                ->formatStateUsing(fn (int $state) => PengajuanWorkflowService::URUTAN_APPROVAL[$state] ?? $state),
                             TextEntry::make('status')->label('Status')->badge(),
                             TextEntry::make('penandatangan.name')->label('Diproses Oleh')->placeholder('-'),
                             TextEntry::make('diproses_at')->label('Waktu')->dateTime('d M Y H:i')->placeholder('-'),
@@ -192,7 +194,7 @@ class PengajuanInfolist
                 ]),
             Section::make('Aspek Penilaian (Diusulkan Peserta)')
                 ->icon('heroicon-o-list-bullet')
-                ->visible(fn ($record) => filled($record->evaluasi?->aspek_penilaian_default) && $record->evaluasi?->dinilai_at === null)
+                ->visible(fn ($record) => filled(data_get($record->evaluasi, 'aspek_penilaian_default')) && data_get($record->evaluasi, 'dinilai_at') === null)
                 ->schema([
                     TextEntry::make('evaluasi.aspek_penilaian_default')
                         ->label('')

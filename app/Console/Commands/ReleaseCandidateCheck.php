@@ -66,6 +66,7 @@ class ReleaseCandidateCheck extends Command
             if (($check['strict_only'] ?? false) && ! $strict) {
                 $symbol = $check['ok'] ? 'INFO' : 'DEFER';
                 $this->line(sprintf('[%s] %s — %s', $symbol, $check['label'], $check['detail']));
+
                 continue;
             }
 
@@ -77,6 +78,7 @@ class ReleaseCandidateCheck extends Command
         if ($failed !== []) {
             $this->newLine();
             $this->error(count($failed).' release-candidate check(s) failed.');
+
             return self::FAILURE;
         }
 
@@ -122,6 +124,7 @@ class ReleaseCandidateCheck extends Command
             $this->check('Database connectivity', true, DB::connection()->getDriverName());
         } catch (Throwable $e) {
             $this->check('Database connectivity', false, $e->getMessage());
+
             return;
         }
 

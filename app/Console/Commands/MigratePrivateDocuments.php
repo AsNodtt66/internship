@@ -42,6 +42,7 @@ class MigratePrivateDocuments extends Command
                             if (! PrivateDocumentRegistry::isSafePath($path)) {
                                 $this->warn('Lewati path tidak aman: '.$record::class.'#'.$record->getKey().' '.$field);
                                 $missing++;
+
                                 continue;
                             }
 
@@ -58,29 +59,23 @@ class MigratePrivateDocuments extends Command
                             if (! $source->exists($path)) {
                                 $this->warn('File tidak ditemukan: '.$record::class.'#'.$record->getKey().' '.$field.' => '.$path);
                                 $missing++;
+
                                 continue;
                             }
 
                             $stream = $source->readStream($path);
 
-                            if ($stream === false) {
+                            if (! is_resource($stream)) {
                                 $this->warn("Gagal membaca: {$path}");
                                 $missing++;
+
                                 continue;
                             }
 
                             try {
-                                $written = $target->writeStream($path, $stream, ['visibility' => 'private']);
+                                $target->writeStream($path, $stream, ['visibility' => 'private']);
                             } finally {
-                                if (is_resource($stream)) {
-                                    fclose($stream);
-                                }
-                            }
-
-                            if (! $written) {
-                                $this->error("Gagal menulis ke private storage: {$path}");
-                                $missing++;
-                                continue;
+                                fclose($stream);
                             }
 
                             if (! $keepPublic) {

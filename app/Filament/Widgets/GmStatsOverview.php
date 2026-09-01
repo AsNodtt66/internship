@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Pages\TugasSaya;
 use App\Models\Pengajuan;
 use App\Services\PengajuanWorkflowService;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -60,7 +61,7 @@ class GmStatsOverview extends BaseWidget
                 ->description('Perlu tindakan Anda')
                 ->descriptionIcon('heroicon-m-clock')
                 ->color('warning')
-                ->url(fn () => \App\Filament\Pages\TugasSaya::getUrl()),
+                ->url(fn () => TugasSaya::getUrl()),
 
             Stat::make('Disetujui', $disetujui)
                 ->description($total > 0 ? round($disetujui / $total * 100).'% dari total' : '-')

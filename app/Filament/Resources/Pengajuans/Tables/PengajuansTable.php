@@ -9,7 +9,6 @@ use App\Models\Evaluasi;
 use App\Models\PembimbingLapangan;
 use App\Models\Pengajuan;
 use App\Models\Role;
-use App\Models\SuratBalasan;
 use App\Models\User;
 use App\Services\PengajuanWorkflowService;
 use App\Support\Ui\PengajuanStatusPresenter;
@@ -46,7 +45,7 @@ class PengajuansTable
                     ->copyable()
                     ->copyMessage('Nomor agenda disalin')
                     ->description(fn (Pengajuan $record) => $record->pengajuan_asal_id
-                        ? '↳ Perpanjangan dari #'.($record->pengajuanAsal?->nomor_agenda ?? $record->pengajuan_asal_id)
+                        ? '↳ Perpanjangan dari #'.($record->pengajuanAsal->nomor_agenda ?? $record->pengajuan_asal_id)
                         : ($record->pengajuanPerpanjangan ? '⤷ Sudah diperpanjang' : null))
                     ->searchable(),
 
@@ -76,17 +75,17 @@ class PengajuansTable
                     ->label('Target Selesai')
                     ->visible(fn () => Auth::user()?->hasRole(RoleSlug::PIC))
                     ->date('d M Y')
-                    ->description(fn (Pengajuan $record) => $record->status === 'berjalan' && $record->tanggal_selesai
+                    ->description(fn (Pengajuan $record) => $record->status === 'berjalan'
                         ? ($record->tanggal_selesai->isPast()
                             ? 'Sudah lewat '.$record->tanggal_selesai->diffInDays(now()).' hari — segera selesaikan'
                             : ($record->tanggal_selesai->diffInDays(now()) <= 7
                                 ? 'Sisa '.$record->tanggal_selesai->diffInDays(now()).' hari lagi'
                                 : null))
                         : null)
-                    ->color(fn (Pengajuan $record) => $record->status === 'berjalan' && $record->tanggal_selesai
+                    ->color(fn (Pengajuan $record) => $record->status === 'berjalan'
                         ? ($record->tanggal_selesai->isPast() ? 'danger' : ($record->tanggal_selesai->diffInDays(now()) <= 7 ? 'warning' : null))
                         : null)
-                    ->weight(fn (Pengajuan $record) => $record->status === 'berjalan' && $record->tanggal_selesai?->isPast() ? 'bold' : null)
+                    ->weight(fn (Pengajuan $record) => $record->status === 'berjalan' && $record->tanggal_selesai->isPast() ? 'bold' : null)
                     ->sortable(),
 
                 TextColumn::make('created_at')
@@ -174,7 +173,7 @@ class PengajuansTable
                                 Action::make('lihatFile')
                                     ->icon('heroicon-o-eye')
                                     ->tooltip('Lihat file yang diunggah peserta')
-                                    ->url(fn (\Filament\Schemas\Components\Utilities\Get $get) => $get('id') ? route('documents.persyaratan', (int) $get('id')) : null)
+                                    ->url(fn (Get $get) => $get('id') ? route('documents.persyaratan', (int) $get('id')) : null)
                                     ->openUrlInNewTab()
                             ),
                         Select::make('status_verifikasi')
@@ -231,7 +230,7 @@ class PengajuansTable
             ->color('gray')
             ->visible(fn (Pengajuan $record) => Auth::user()?->hasRole(RoleSlug::PIC)
                 && in_array($record->status, ['diajukan', 'verifikasi_dokumen', 'dokumen_ditolak'], true))
-            ->modalDescription(fn (Pengajuan $record) => 'Bagian Tujuan saat ini: '.($record->bagianTujuan?->nama_bagian ?? '-').'. Gunakan ini kalau jurusan/latar belakang peserta ternyata lebih cocok ke bagian lain.')
+            ->modalDescription(fn (Pengajuan $record) => 'Bagian Tujuan saat ini: '.($record->bagianTujuan->nama_bagian ?? '-').'. Gunakan ini kalau jurusan/latar belakang peserta ternyata lebih cocok ke bagian lain.')
             ->fillForm(fn (Pengajuan $record) => [
                 'bagian_tujuan_id' => $record->bagian_tujuan_id,
             ])
@@ -382,7 +381,7 @@ class PengajuansTable
             ->icon('heroicon-o-user-plus')
             ->color('warning')
             ->modalDescription(fn (Pengajuan $record) => $record->catatan_pembimbing
-                ? 'Catatan dari '.($record->catatanPembimbingOleh?->name ?? 'Kepala Bagian').': "'.$record->catatan_pembimbing.'"'
+                ? 'Catatan dari '.($record->catatanPembimbingOleh->name ?? 'Kepala Bagian').': "'.$record->catatan_pembimbing.'"'
                 : ($record->pengajuanAsal?->penugasanPembimbing
                     ? 'Ini perpanjangan -- Pembimbing Lapangan sudah otomatis disamakan dengan periode sebelumnya ('.$record->pengajuanAsal->penugasanPembimbing->nama_tampil.'). Ubah kalau memang perlu ganti.'
                     : null))

@@ -9,8 +9,12 @@ export default defineConfig({
   expect: { timeout: 7_500 },
   fullyParallel: false,
   forbidOnly: isCI,
+  failOnFlakyTests: true,
   retries: isCI ? 2 : 0,
   workers: isCI ? 1 : undefined,
+  // Visual baselines are approved only for the Chromium project. Keep their
+  // path independent from the host OS so Windows and Linux compare the same file.
+  snapshotPathTemplate: '__screenshots__{/projectName}/{testFilePath}/{arg}{ext}',
   outputDir: 'test-results/playwright-artifacts',
   reporter: [
     ['list'],
@@ -24,7 +28,7 @@ export default defineConfig({
     video: 'retain-on-failure',
   },
   webServer: process.env.PLAYWRIGHT_EXTERNAL_SERVER === '1' ? undefined : {
-    command: 'php artisan serve --host=127.0.0.1 --port=8000',
+    command: 'php artisan serve --env=testing --host=127.0.0.1 --port=8000',
     url: `${baseURL}/up`,
     reuseExistingServer: !isCI,
     timeout: 120_000,

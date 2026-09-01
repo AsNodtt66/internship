@@ -18,8 +18,23 @@ class NotifikasiPolicy
         return $user->hasRole(RoleSlug::PIC) || $notifikasi->user_id === $user->id;
     }
 
-    public function create(User $user): bool { return $user->hasRole(RoleSlug::PIC); }
-    public function update(User $user, Notifikasi $notifikasi): bool { return $user->hasRole(RoleSlug::PIC); }
-    public function delete(User $user, Notifikasi $notifikasi): bool { return $user->hasRole(RoleSlug::PIC); }
-    public function deleteAny(User $user): bool { return $user->hasRole(RoleSlug::PIC); }
+    public function create(User $user): bool
+    {
+        return $user->hasRole(RoleSlug::PIC);
+    }
+
+    public function update(User $user, Notifikasi $notifikasi): bool
+    {
+        return $user->hasRole(RoleSlug::PIC);
+    }
+
+    public function delete(User $user, Notifikasi $notifikasi): bool
+    {
+        return $user->hasRole(RoleSlug::PIC);
+    }
+
+    public function deleteAny(User $user): bool
+    {
+        return $user->hasRole(RoleSlug::PIC);
+    }
 }

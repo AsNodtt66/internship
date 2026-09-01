@@ -19,7 +19,6 @@ env:
   MAIL_MAILER: array
   BCRYPT_ROUNDS: '4'
   NODE_VERSION: '22.16.0'
-  PLAYWRIGHT_VERSION: '1.62.0'
 
 jobs:
   source-quality:
@@ -46,6 +45,8 @@ jobs:
         run: find app bootstrap config database routes tests scripts -type f -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Pint
         run: php vendor/bin/pint --test
+      - name: PHPStan
+        run: php vendor/bin/phpstan analyse --memory-limit=1G --no-progress
       - name: Project audits
         run: |
           php scripts/p8-testing-audit.php
@@ -143,6 +144,65 @@ jobs:
           path: test-results/phpunit-mysql.xml
           retention-days: 14
 
+  php-coverage:
+    name: PHP coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: mbstring, dom, xml, xmlwriter, intl, fileinfo, pdo_sqlite
+          coverage: pcov
+          tools: composer:v2
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+      - name: Prepare SQLite test environment
+        run: |
+          cp .env.testing.example .env
+          sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
+          sed -i 's#^DB_DATABASE=.*#DB_DATABASE=:memory:#' .env
+          php artisan key:generate --force
+      - name: Generate coverage report
+        run: composer test:coverage
+      - uses: actions/upload-artifact@v5
+        if: ${{ !cancelled() }}
+        with:
+          name: php-coverage
+          path: coverage/
+          retention-days: 14
+
+  mutation-testing:
+    name: Mutation testing
+    needs: php-coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: mbstring, dom, xml, xmlwriter, intl, fileinfo, pdo_sqlite
+          coverage: pcov
+          tools: composer:v2
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+      - name: Prepare SQLite test environment
+        run: |
+          cp .env.testing.example .env
+          sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
+          sed -i 's#^DB_DATABASE=.*#DB_DATABASE=:memory:#' .env
+          php artisan key:generate --force
+      - name: Run mutation testing
+        run: composer test:mutation
+      - uses: actions/upload-artifact@v5
+        if: ${{ !cancelled() }}
+        with:
+          name: infection-report
+          path: infection-log/
+          retention-days: 14
+
   frontend-build:
     name: Frontend build and audit
     runs-on: ubuntu-latest
@@ -201,7 +261,6 @@ jobs:
         run: |
           composer install --prefer-dist --no-interaction --no-progress
           npm ci --no-fund
-          npm install --no-save --ignore-scripts @playwright/test@${PLAYWRIGHT_VERSION}
       - name: Build assets
         run: npm run build
       - name: Prepare deterministic E2E database
@@ -214,6 +273,12 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Run Chromium E2E
         run: npx playwright test --project=chromium
+      - name: Run critical flake check
+        run: npx playwright test --project=chromium --grep @critical --repeat-each=3
+      - name: Run Axe accessibility checks
+        run: npm run test:e2e:a11y
+      - name: Run visual regression checks
+        run: npm run test:e2e:visual
       - uses: actions/upload-artifact@v5
         if: ${{ !cancelled() }}
         with:
@@ -264,7 +329,6 @@ jobs:
         run: |
           composer install --prefer-dist --no-interaction --no-progress
           npm ci --no-fund
-          npm install --no-save --ignore-scripts @playwright/test@${PLAYWRIGHT_VERSION}
       - name: Build assets
         run: npm run build
       - name: Prepare deterministic E2E database
@@ -293,6 +357,8 @@ jobs:
       - source-quality
       - backend-tests
       - mysql-integration
+      - php-coverage
+      - mutation-testing
       - frontend-build
       - playwright-chromium
       - playwright-cross-browser
@@ -303,6 +369,8 @@ jobs:
           SOURCE: ${{ needs.source-quality.result }}
           BACKEND: ${{ needs.backend-tests.result }}
           MYSQL: ${{ needs.mysql-integration.result }}
+          COVERAGE: ${{ needs.php-coverage.result }}
+          MUTATION: ${{ needs.mutation-testing.result }}
           FRONTEND: ${{ needs.frontend-build.result }}
           CHROMIUM: ${{ needs.playwright-chromium.result }}
           CROSS_BROWSER: ${{ needs.playwright-cross-browser.result }}
@@ -311,12 +379,16 @@ jobs:
             "source-quality=$SOURCE" \
             "backend-tests=$BACKEND" \
             "mysql-integration=$MYSQL" \
+            "php-coverage=$COVERAGE" \
+            "mutation-testing=$MUTATION" \
             "frontend-build=$FRONTEND" \
             "playwright-chromium=$CHROMIUM" \
             "playwright-cross-browser=$CROSS_BROWSER"
           test "$SOURCE" = success
           test "$BACKEND" = success
           test "$MYSQL" = success
+          test "$COVERAGE" = success
+          test "$MUTATION" = success
           test "$FRONTEND" = success
           test "$CHROMIUM" = success
           test "$CROSS_BROWSER" = success

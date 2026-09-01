@@ -221,11 +221,11 @@ Windows PowerShell:
 
 ```powershell
 $env:APP_ENV='testing'
-php artisan migrate:fresh --force
-php artisan db:seed --class=TestingSeeder --force
+php artisan migrate:fresh --env=testing --force
+php artisan db:seed --env=testing --class=TestingSeeder --force
 npm run build
 .\scripts\e2e\install-playwright.ps1
 .\scripts\e2e\run.ps1 --project=chromium --grep '@critical'
 ```
 
-Lihat [P8 Playwright & CI](P8-PLAYWRIGHT-CI.md).
+Lihat [P8 Playwright & CI](P8-PLAYWRIGHT-CI.md) untuk setup E2E dan [P9 Test Strategy](P9-TEST-STRATEGY.md) untuk gate lengkap sebelum commit.

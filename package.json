@@ -8,14 +8,18 @@
         "test:e2e": "playwright test",
         "test:e2e:critical": "playwright test --project=chromium --grep @critical",
         "test:e2e:chromium": "playwright test --project=chromium",
-        "test:e2e:cross-browser": "playwright test --project=firefox --project=webkit --project=mobile-chrome"
+        "test:e2e:cross-browser": "playwright test --project=firefox --project=webkit --project=mobile-chrome",
+        "test:e2e:a11y": "playwright test e2e/accessibility --project=chromium",
+        "test:e2e:visual": "playwright test e2e/visual --project=chromium"
     },
     "devDependencies": {
+        "@axe-core/playwright": "^4.13.0",
+        "@playwright/test": "^1.62.0",
         "@tailwindcss/vite": "^4.0.0",
         "axios": "^1.11.0",
         "concurrently": "^9.0.1",
-        "laravel-vite-plugin": "^1.0.5",
+        "laravel-vite-plugin": "^3.2.0",
         "tailwindcss": "^4.0.0",
-        "vite": "^5.4.10"
+        "vite": "^8.2.2"
     }
 }

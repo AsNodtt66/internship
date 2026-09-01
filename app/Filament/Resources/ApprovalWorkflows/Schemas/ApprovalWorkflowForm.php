@@ -19,7 +19,7 @@ class ApprovalWorkflowForm
                     Select::make('pengajuan_id')
                         ->label('Pengajuan')
                         ->relationship('pengajuan', 'id')
-                        ->getOptionLabelFromRecordUsing(fn ($record) => $record->nomor_agenda ?? ('Pengajuan #' . $record->id))
+                        ->getOptionLabelFromRecordUsing(fn ($record) => $record->nomor_agenda ?? ('Pengajuan #'.$record->id))
                         ->searchable()
                         ->preload()
                         ->required(),

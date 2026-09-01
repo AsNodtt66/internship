@@ -17,6 +17,7 @@ class Perpanjangan extends Model
         'tanggal_selesai_baru' => 'date',
     ];
 
+    /** @return BelongsTo<Pengajuan, $this> */
     public function pengajuan(): BelongsTo
     {
         return $this->belongsTo(Pengajuan::class);
@@ -26,6 +27,7 @@ class Perpanjangan extends Model
      * Pengajuan BARU yang dibuat sistem begitu permohonan ini disetujui
      * Kepala Bagian (bukan pengajuan lama yang tanggalnya diubah).
      */
+    /** @return BelongsTo<Pengajuan, $this> */
     public function pengajuanBaru(): BelongsTo
     {
         return $this->belongsTo(Pengajuan::class, 'pengajuan_baru_id');

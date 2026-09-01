@@ -2,7 +2,20 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Dashboard;
+use App\Filament\Widgets\GmDepartmentUniversityWidget;
+use App\Filament\Widgets\GmMonthlyChartWidget;
+use App\Filament\Widgets\GmPendingApprovalsWidget;
+use App\Filament\Widgets\GmRecentActivityWidget;
+use App\Filament\Widgets\GmStatsOverview;
+use App\Filament\Widgets\GmWorkflowFunnelWidget;
+use App\Filament\Widgets\KepalaBagianStatsWidget;
+use App\Filament\Widgets\PengajuanStatsWidget;
+use App\Filament\Widgets\PerluTindakanWidget;
+use App\Filament\Widgets\PesertaAktifTableWidget;
+use App\Filament\Widgets\PesertaSelesaiTableWidget;
+use App\Filament\Widgets\RecentActivityWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -18,18 +31,6 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use App\Filament\Widgets\GmDepartmentUniversityWidget;
-use App\Filament\Widgets\GmMonthlyChartWidget;
-use App\Filament\Widgets\GmPendingApprovalsWidget;
-use App\Filament\Widgets\GmRecentActivityWidget;
-use App\Filament\Widgets\GmStatsOverview;
-use App\Filament\Widgets\GmWorkflowFunnelWidget;
-use App\Filament\Widgets\KepalaBagianStatsWidget;
-use App\Filament\Widgets\PengajuanStatsWidget;
-use App\Filament\Widgets\PerluTindakanWidget;
-use App\Filament\Widgets\PesertaAktifTableWidget;
-use App\Filament\Widgets\PesertaSelesaiTableWidget;
-use App\Filament\Widgets\RecentActivityWidget;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -39,7 +40,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login(\App\Filament\Pages\Auth\Login::class)
+            ->login(Login::class)
             ->brandName('Sistem Magang & Penelitian')
             ->brandLogo(fn () => asset('images/logo-rajawali.png'))
             ->brandLogoHeight('2.5rem')
@@ -53,7 +54,7 @@ class AdminPanelProvider extends PanelProvider
             ->darkMode(false)
             ->sidebarCollapsibleOnDesktop()
             ->renderHook(
-                \Filament\View\PanelsRenderHook::SIDEBAR_START,
+                PanelsRenderHook::SIDEBAR_START,
                 fn () => view('filament.hooks.brand'),
             )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')

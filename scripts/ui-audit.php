@@ -49,7 +49,6 @@ expectNotContains('resources/views/filament/peserta/widgets/quick-actions.blade.
 expectNotContains('resources/views/landing.blade.php', 'kamu', 'landing page harus konsisten memakai sapaan formal Anda.');
 expectNotContains('resources/views/landing.blade.php', 'magangmu', 'landing page harus konsisten memakai sapaan formal Anda.');
 
-
 expectContains('app/Filament/Peserta/Resources/PengajuanResource.php', "->description('Pilih jalur pengajuan dan pahami ketentuannya.')", 'wizard pengajuan harus memberi orientasi pada setiap tahap.');
 expectContains('app/Filament/Peserta/Resources/PengajuanResource.php', "->persistStepInQueryString('tahap')", 'tahap wizard harus dapat dipertahankan pada URL untuk wayfinding.');
 expectContains('app/Filament/Peserta/Resources/PengajuanResource.php', '->previousAction(fn (Action $action) => $action->label(\'Kembali\'))', 'aksi wizard sebelumnya harus menggunakan bahasa Indonesia.');

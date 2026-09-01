@@ -41,7 +41,7 @@ class ExtensionReminderService
                             return false;
                         }
 
-                        $tanggalSelesai = $pengajuan->tanggal_selesai?->format('d-m-Y') ?? '-';
+                        $tanggalSelesai = $pengajuan->tanggal_selesai->format('d-m-Y');
 
                         $this->notifications->participant(
                             $pengajuan,

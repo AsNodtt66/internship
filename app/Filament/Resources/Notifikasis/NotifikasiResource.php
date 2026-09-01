@@ -3,9 +3,7 @@
 namespace App\Filament\Resources\Notifikasis;
 
 use App\Models\Notifikasi;
-use Illuminate\Support\Facades\Auth;
 use BackedEnum;
-use UnitEnum;
 use Filament\Actions;
 use Filament\Forms\Components;
 use Filament\Resources\Resource;
@@ -13,7 +11,9 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
-use App\Filament\Resources\Notifikasis\Pages;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
+use UnitEnum;
 
 class NotifikasiResource extends Resource
 {
@@ -30,24 +30,21 @@ class NotifikasiResource extends Resource
      * karena dia yang mengelola/broadcast notifikasi ke semua pihak lewat
      * resource ini (lihat form & actions di bawah).
      */
-    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();
 
-        if (\Illuminate\Support\Facades\Auth::user()?->role?->slug !== 'pic') {
-            $query->where('user_id', \Illuminate\Support\Facades\Auth::id());
+        if (Auth::user()?->role?->slug !== 'pic') {
+            $query->where('user_id', Auth::id());
         }
 
         return $query;
     }
 
-
-
-
     public static function getNavigationBadge(): ?string
     {
         $count = static::getModel()::query()
-            ->where('user_id', \Illuminate\Support\Facades\Auth::id())
+            ->where('user_id', Auth::id())
             ->where('is_read', false)
             ->count();
 

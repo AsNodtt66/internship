@@ -19,7 +19,9 @@ return new class extends Migration
             $table->date('tanggal_selesai');
             $table->enum('status', [
                 'draft', 'diajukan', 'verifikasi_dokumen', 'dokumen_ditolak',
-                'proses_approval', 'disetujui', 'ditolak', 'berjalan',
+                'proses_approval', 'disetujui', 'menunggu_persetujuan_pembimbing',
+                'menunggu_catatan_pembimbing', 'menunggu_penetapan_pembimbing',
+                'ditolak', 'berjalan',
                 'selesai', 'perlu_perpanjangan',
             ])->default('draft');
             $table->timestamp('diajukan_at')->nullable();

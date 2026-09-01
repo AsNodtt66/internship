@@ -38,8 +38,23 @@ class ApprovalWorkflowPolicy
         return true;
     }
 
-    public function create(User $user): bool { return $user->hasRole(RoleSlug::PIC); }
-    public function update(User $user, ApprovalWorkflow $workflow): bool { return $user->hasRole(RoleSlug::PIC); }
-    public function delete(User $user, ApprovalWorkflow $workflow): bool { return $user->hasRole(RoleSlug::PIC); }
-    public function deleteAny(User $user): bool { return $user->hasRole(RoleSlug::PIC); }
+    public function create(User $user): bool
+    {
+        return $user->hasRole(RoleSlug::PIC);
+    }
+
+    public function update(User $user, ApprovalWorkflow $workflow): bool
+    {
+        return $user->hasRole(RoleSlug::PIC);
+    }
+
+    public function delete(User $user, ApprovalWorkflow $workflow): bool
+    {
+        return $user->hasRole(RoleSlug::PIC);
+    }
+
+    public function deleteAny(User $user): bool
+    {
+        return $user->hasRole(RoleSlug::PIC);
+    }
 }

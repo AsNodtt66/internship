@@ -2,23 +2,26 @@
 
 namespace App\Filament\Peserta\Resources;
 
-use App\Filament\Peserta\Resources\PengajuanPenelitianResource;
-use App\Filament\Peserta\Resources\PengajuanPklResource;
 use App\Filament\Peserta\Resources\PengajuanResource\Pages;
 use App\Models\Pengajuan;
-use App\Support\Ui\PengajuanStatusPresenter;
+use App\Services\DynamicFormFieldBuilder;
+use App\Services\PengajuanWorkflowService;
 use App\Support\Authorization\PengajuanAccess;
+use App\Support\Ui\PengajuanStatusPresenter;
+use Carbon\Carbon;
+use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
-use Filament\Actions\Action;
-use Filament\Actions\ViewAction;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
@@ -27,9 +30,10 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\HtmlString;
 
+/** @extends resource<Pengajuan> */
 class PengajuanResource extends Resource
 {
     protected static ?string $model = Pengajuan::class;
@@ -59,6 +63,8 @@ class PengajuanResource extends Resource
      * Batasi SELURUH akses resource ini (list, view, edit) hanya ke pengajuan
      * milik peserta yang sedang login. Ini level proteksi paling dasar —
      * berlaku untuk semua halaman, bukan cuma tabel list.
+     *
+     * @return Builder<Pengajuan>
      */
     public static function getEloquentQuery(): Builder
     {
@@ -176,18 +182,18 @@ class PengajuanResource extends Resource
                             // perpanjangan (lihat catatan di step Pernyataan &
                             // alur ajukanPermohonanPerpanjangan() di service).
                             ->maxDate(fn (Get $get) => filled($get('tanggal_mulai'))
-                                ? \Carbon\Carbon::parse($get('tanggal_mulai'))->addMonths(\App\Services\PengajuanWorkflowService::MASA_PKL_MAKSIMAL_BULAN)
+                                ? Carbon::parse($get('tanggal_mulai'))->addMonths(PengajuanWorkflowService::MASA_PKL_MAKSIMAL_BULAN)
                                 : null)
-                            ->helperText('Maksimal '.\App\Services\PengajuanWorkflowService::MASA_PKL_MAKSIMAL_BULAN.' bulan sejak tanggal mulai. Jika kegiatan perlu diperpanjang, gunakan alur perpanjangan setelah periode berjalan.'),
+                            ->helperText('Maksimal '.PengajuanWorkflowService::MASA_PKL_MAKSIMAL_BULAN.' bulan sejak tanggal mulai. Jika kegiatan perlu diperpanjang, gunakan alur perpanjangan setelah periode berjalan.'),
                         Placeholder::make('durasi')
                             ->content(function (Get $get) {
                                 if (! $get('tanggal_mulai') || ! $get('tanggal_selesai')) {
                                     return '-';
                                 }
-                                $mulai = \Carbon\Carbon::parse($get('tanggal_mulai'));
-                                $selesai = \Carbon\Carbon::parse($get('tanggal_selesai'));
+                                $mulai = Carbon::parse($get('tanggal_mulai'));
+                                $selesai = Carbon::parse($get('tanggal_selesai'));
 
-                                return $mulai->diffInDays($selesai) . ' hari';
+                                return $mulai->diffInDays($selesai).' hari';
                             }),
                         Select::make('bagian_tujuan_id')
                             ->label('Bagian Tujuan')
@@ -305,7 +311,7 @@ class PengajuanResource extends Resource
                         Textarea::make('motivasi')->label('Motivasi')->helperText('Jelaskan alasan memilih PT Rajawali I Unit PG Krebet Baru dan kaitannya dengan tujuan akademik Anda.')->rows(4)->required(),
                         TextInput::make('sumber_informasi')->label('Sumber Informasi')->placeholder('Contoh: kampus, sekolah, website, atau rekomendasi')->nullable(),
                         TextInput::make('rekomendasi_dari')->label('Direkomendasikan Oleh (Opsional)')->nullable(),
-                        ...app(\App\Services\DynamicFormFieldBuilder::class)->buildFor('pengajuan'),
+                        ...app(DynamicFormFieldBuilder::class)->buildFor('pengajuan'),
                     ]),
 
                 Step::make('Pernyataan')
@@ -324,8 +330,8 @@ class PengajuanResource extends Resource
                 ->persistStepInQueryString('tahap')
                 ->previousAction(fn (Action $action) => $action->label('Kembali'))
                 ->nextAction(fn (Action $action) => $action->label('Lanjut'))
-                ->submitAction(new \Illuminate\Support\HtmlString(
-                    \Illuminate\Support\Facades\Blade::render(<<<'BLADE'
+                ->submitAction(new HtmlString(
+                    Blade::render(<<<'BLADE'
                         <x-filament::button type="submit" icon="heroicon-o-paper-airplane">
                             Kirim Pengajuan
                         </x-filament::button>

@@ -20,6 +20,7 @@ class RiwayatStatus extends Model
     /**
      * Relasi ke data Pengajuan yang statusnya berubah.
      */
+    /** @return BelongsTo<Pengajuan, $this> */
     public function pengajuan(): BelongsTo
     {
         return $this->belongsTo(Pengajuan::class);
@@ -28,6 +29,7 @@ class RiwayatStatus extends Model
     /**
      * Relasi ke User (Staff SDM/Admin) yang mengubah status.
      */
+    /** @return BelongsTo<User, $this> */
     public function changedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'changed_by');

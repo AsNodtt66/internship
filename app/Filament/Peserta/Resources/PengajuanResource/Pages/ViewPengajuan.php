@@ -4,6 +4,7 @@ namespace App\Filament\Peserta\Resources\PengajuanResource\Pages;
 
 use App\Enums\RoleSlug;
 use App\Filament\Peserta\Resources\PengajuanResource;
+use App\Models\Pengajuan;
 use App\Services\PengajuanWorkflowService;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
@@ -18,6 +19,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
 
+/** @property Pengajuan $record */
 class ViewPengajuan extends ViewRecord
 {
     protected static string $resource = PengajuanResource::class;
@@ -77,7 +79,7 @@ class ViewPengajuan extends ViewRecord
                 ]),
 
             Section::make('Hasil Penilaian')
-                ->visible(fn ($record) => $record->penilaian !== null)
+                ->visible(fn (Pengajuan $record) => $record->penilaian !== null)
                 ->schema([
                     ViewEntry::make('penilaian')
                         ->hiddenLabel()
@@ -85,7 +87,7 @@ class ViewPengajuan extends ViewRecord
                 ]),
 
             Section::make('Hasil Evaluasi')
-                ->visible(fn ($record) => $record->evaluasi?->nilai_akhir !== null)
+                ->visible(fn (Pengajuan $record) => $record->evaluasi?->nilai_akhir !== null)
                 ->schema([
                     ViewEntry::make('evaluasi')
                         ->hiddenLabel()
@@ -94,7 +96,7 @@ class ViewPengajuan extends ViewRecord
 
             Section::make('Aspek Penilaian')
                 ->icon('heroicon-o-list-bullet')
-                ->visible(fn ($record) => filled($record->evaluasi?->aspek_penilaian_default) && $record->evaluasi?->dinilai_at === null)
+                ->visible(fn (Pengajuan $record) => filled(data_get($record->evaluasi, 'aspek_penilaian_default')) && data_get($record->evaluasi, 'dinilai_at') === null)
                 ->schema([
                     TextEntry::make('evaluasi.aspek_penilaian_default')
                         ->label('Aspek yang akan dinilai (belum ada hasil)')
@@ -182,7 +184,7 @@ class ViewPengajuan extends ViewRecord
 
             Action::make('pilihPerpanjang')
                 ->authorize(fn () => Auth::user()?->hasRole(RoleSlug::PESERTA) === true
-                    && Auth::user()?->can('view', $this->record) === true)
+                    && Auth::user()->can('view', $this->record) === true)
                 ->label('Pilih Perpanjangan')
                 ->icon('heroicon-o-arrow-path')
                 ->color('warning')
@@ -202,7 +204,7 @@ class ViewPengajuan extends ViewRecord
 
             Action::make('pilihTidakPerpanjang')
                 ->authorize(fn () => Auth::user()?->hasRole(RoleSlug::PESERTA) === true
-                    && Auth::user()?->can('view', $this->record) === true)
+                    && Auth::user()->can('view', $this->record) === true)
                 ->label('Selesaikan Tanpa Perpanjangan')
                 ->icon('heroicon-o-check-circle')
                 ->color('success')
@@ -221,7 +223,7 @@ class ViewPengajuan extends ViewRecord
 
             Action::make('usulkanAspekPenilaian')
                 ->authorize(fn () => Auth::user()?->hasRole(RoleSlug::PESERTA) === true
-                    && Auth::user()?->can('view', $this->record) === true)
+                    && Auth::user()->can('view', $this->record) === true)
                 ->label(fn () => $this->record->evaluasi?->aspek_penilaian_default ? 'Ubah Aspek Penilaian' : 'Isi Aspek Penilaian')
                 ->icon('heroicon-o-list-bullet')
                 ->color('gray')
@@ -259,8 +261,8 @@ class ViewPengajuan extends ViewRecord
                 }),
 
             Action::make('ajukanPerpanjangan')
-                ->authorize(fn () => Auth::user()?->hasRole(RoleSlug::PESERTA) === true
-                    && Auth::user()?->can('view', $this->record) === true)
+                ->authorize(fn () => Auth::user()->hasRole(RoleSlug::PESERTA)
+                    && Auth::user()->can('view', $this->record))
                 ->label('Ajukan Perpanjangan')
                 ->icon('heroicon-o-document-arrow-up')
                 ->color('warning')

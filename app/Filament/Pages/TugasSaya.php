@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Enums\RoleSlug;
 use App\Filament\Resources\Pengajuans\PengajuanResource;
+use App\Models\ApprovalWorkflow;
 use App\Models\Pengajuan;
 use App\Services\PengajuanWorkflowService;
 use BackedEnum;
@@ -11,7 +12,6 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -154,12 +154,12 @@ class TugasSaya extends Page implements HasTable
      */
     protected function aksiUtama(): array
     {
-        $roleSlug = Auth::user()?->role?->slug;
+        $roleSlug = Auth::user()->role?->slug;
 
         $aksi = [
             Action::make('tandatangani')
                 ->authorize(fn (Pengajuan $record) => Auth::user()?->can('view', $record) === true
-                    && Auth::user()?->hasAnyRole([RoleSlug::GM, RoleSlug::KABAG_SDM, RoleSlug::STAFF_SDM, RoleSlug::KEPALA_BAGIAN]) === true)
+                    && Auth::user()->hasAnyRole([RoleSlug::GM, RoleSlug::KABAG_SDM, RoleSlug::STAFF_SDM, RoleSlug::KEPALA_BAGIAN]))
                 ->label('Tandatangani')
                 ->icon('heroicon-o-pencil-square')
                 ->color('success')

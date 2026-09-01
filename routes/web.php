@@ -4,8 +4,8 @@ use App\Http\Controllers\CetakDisposisiController;
 use App\Http\Controllers\CetakFormulirEvaluasiController;
 use App\Http\Controllers\CetakRingkasanController;
 use App\Http\Controllers\CetakSuratKeputusanController;
-use App\Http\Controllers\PrivateDocumentController;
 use App\Http\Controllers\HealthCheckController;
+use App\Http\Controllers\PrivateDocumentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health/ready', HealthCheckController::class)->middleware('throttle:health')->name('health.ready');

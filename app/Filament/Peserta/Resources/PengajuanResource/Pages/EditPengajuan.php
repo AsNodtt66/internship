@@ -4,9 +4,11 @@ namespace App\Filament\Peserta\Resources\PengajuanResource\Pages;
 
 use App\Filament\Peserta\Resources\PengajuanResource;
 use App\Models\DokumenPersyaratan;
+use App\Models\Pengajuan;
 use App\Services\PengajuanWorkflowService;
 use Filament\Resources\Pages\EditRecord;
 
+/** @property Pengajuan $record */
 class EditPengajuan extends EditRecord
 {
     protected static string $resource = PengajuanResource::class;

@@ -29,13 +29,9 @@ class PesertaStatsOverview extends BaseWidget
         }
 
         // Format tanggal secara aman menggunakan Carbon::parse()
-        $tglMulai = $pengajuan->tanggal_mulai 
-            ? Carbon::parse($pengajuan->tanggal_mulai)->format('d M Y') 
-            : '-';
-            
-        $tglSelesai = $pengajuan->tanggal_selesai 
-            ? Carbon::parse($pengajuan->tanggal_selesai)->format('d M Y') 
-            : '-';
+        $tglMulai = Carbon::parse($pengajuan->tanggal_mulai)->format('d M Y');
+
+        $tglSelesai = Carbon::parse($pengajuan->tanggal_selesai)->format('d M Y');
 
         return [
             Stat::make('Total Pengajuan', $this->totalPengajuan())
@@ -58,10 +54,10 @@ class PesertaStatsOverview extends BaseWidget
 
         return Pengajuan::where(function ($query) use ($user) {
             $query->whereHas('peserta', fn ($q) => $q->where('user_id', $user->id))
-                  ->orWhere('email_aktif', $user->email);
+                ->orWhere('email_aktif', $user->email);
         })
-        ->latest()
-        ->first();
+            ->latest()
+            ->first();
     }
 
     protected function totalPengajuan(): int
@@ -70,7 +66,7 @@ class PesertaStatsOverview extends BaseWidget
 
         return Pengajuan::where(function ($query) use ($user) {
             $query->whereHas('peserta', fn ($q) => $q->where('user_id', $user->id))
-                  ->orWhere('email_aktif', $user->email);
+                ->orWhere('email_aktif', $user->email);
         })->count();
     }
 

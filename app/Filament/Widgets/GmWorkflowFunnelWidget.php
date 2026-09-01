@@ -21,7 +21,9 @@ class GmWorkflowFunnelWidget extends Widget
     protected static ?int $sort = 3;
 
     protected int|string|array $columnSpan = [
-        'default' => 'full',
+        // The dashboard's base grid has one column, so no explicit base span
+        // renders identically to `full` while matching Filament's contract.
+        'default' => null,
         'lg' => 1,
     ];
 

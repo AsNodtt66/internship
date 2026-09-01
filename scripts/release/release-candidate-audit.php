@@ -4,7 +4,6 @@
  * P8 source-only readiness audit. Production/staging promotion is outside
  * the current CI scope; P8 proves testing structure and safety controls.
  */
-
 $root = dirname(__DIR__, 2);
 $failures = [];
 $passes = [];

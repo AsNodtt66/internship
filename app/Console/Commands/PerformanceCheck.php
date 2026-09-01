@@ -42,6 +42,7 @@ class PerformanceCheck extends Command
             foreach (self::EXPECTED_INDEXES as $table => $expected) {
                 if (! Schema::hasTable($table)) {
                     $missing[] = "{$table}: table missing";
+
                     continue;
                 }
 

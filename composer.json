@@ -17,6 +17,8 @@
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
+        "infection/infection": "^0.30",
+        "larastan/larastan": "^3.0",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",
         "laravel/sail": "^1.41",
@@ -53,6 +55,18 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test"
+        ],
+        "test:coverage": [
+            "@php artisan test --coverage-clover=coverage/clover.xml --coverage-html=coverage/html --coverage-text=coverage/text.txt"
+        ],
+        "test:mutation": [
+            "@php vendor/bin/infection --configuration=infection.json5 --threads=1"
+        ],
+        "test:quality": [
+            "@php vendor/bin/pint --test",
+            "@php vendor/bin/phpstan analyse --memory-limit=1G --no-progress",
+            "@php artisan test",
+            "@composer audit --locked"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
@@ -118,7 +132,8 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "infection/extension-installer": true
         }
     },
     "minimum-stability": "beta",

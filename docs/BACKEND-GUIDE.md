@@ -209,3 +209,5 @@ Panduan lengkap: [P6-PERFORMANCE.md](P6-PERFORMANCE.md).
 Perubahan policy, workflow service, migration, atau relationship harus lulus SQLite fast suite **dan** MySQL integration suite di CI. Business rule yang dibekukan ada di [BUSINESS-RULES.md](BUSINESS-RULES.md).
 
 Untuk bug authorization/workflow, tambahkan PHPUnit regression terlebih dahulu; tambah Playwright bila bug juga bergantung pada route/browser/Livewire interaction.
+
+P9 memprioritaskan coverage dan mutation testing pada policy, workflow, authorization support, serta private document support. Jalankan dan baca hasilnya melalui [P9 Coverage](P9-COVERAGE.md) dan [P9 Mutation Testing](P9-MUTATION-TESTING.md).

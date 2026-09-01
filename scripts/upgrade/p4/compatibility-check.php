@@ -14,16 +14,18 @@ function readFileOrFail(string $path): string
         fwrite(STDERR, "[FAIL] Tidak bisa membaca {$path}\n");
         exit(1);
     }
+
     return $content;
 }
 
 function jsonFile(string $path): array
 {
     $data = json_decode(readFileOrFail($path), true);
-    if (!is_array($data)) {
+    if (! is_array($data)) {
         fwrite(STDERR, "[FAIL] JSON tidak valid: {$path}\n");
         exit(1);
     }
+
     return $data;
 }
 
@@ -36,16 +38,16 @@ $cache = readFileOrFail($root.'/config/cache.php');
 $session = readFileOrFail($root.'/config/session.php');
 $vite = readFileOrFail($root.'/vite.config.js');
 
-if (!str_contains($adminPanel, 'PreventRequestForgery') || !str_contains($pesertaPanel, 'PreventRequestForgery')) {
+if (! str_contains($adminPanel, 'PreventRequestForgery') || ! str_contains($pesertaPanel, 'PreventRequestForgery')) {
     $failures[] = 'Panel belum siap untuk Laravel 13 PreventRequestForgery.';
 }
-if (!str_contains($appProvider, 'connectionName')) {
+if (! str_contains($appProvider, 'connectionName')) {
     $failures[] = 'QueueBusy listener belum siap untuk property connectionName Laravel 13.';
 }
-if (!str_contains($cache, "'serializable_classes' => false")) {
+if (! str_contains($cache, "'serializable_classes' => false")) {
     $failures[] = 'Cache serializable_classes hardening belum aktif.';
 }
-if (!str_contains($session, "'serialization' => env('SESSION_SERIALIZATION', 'json')")) {
+if (! str_contains($session, "'serialization' => env('SESSION_SERIALIZATION', 'json')")) {
     $failures[] = 'Session JSON serialization target belum dikonfigurasi.';
 }
 if (preg_match('/\barray_(first|last)\s*\(/', implode("\n", array_map(
@@ -72,7 +74,7 @@ if ($expectModern) {
         ['Laravel Vite Plugin 3', $package['devDependencies']['laravel-vite-plugin'] ?? '', '/\^3/'],
     ];
     foreach ($requirements as [$label, $actual, $pattern]) {
-        if (!preg_match($pattern, (string) $actual)) {
+        if (! preg_match($pattern, (string) $actual)) {
             $failures[] = "{$label} belum pada target P4 (aktual: {$actual}).";
         }
     }

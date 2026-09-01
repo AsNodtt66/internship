@@ -18,8 +18,8 @@ $checks = [
         'whereDoesntHave',
     ],
     'app/Services/PengajuanWorkflowService.php' => [
-        "MIN(urutan) as active_urutan",
-        "fromSub(\$activeStepPerSubmission",
+        'MIN(urutan) as active_urutan',
+        'fromSub($activeStepPerSubmission',
     ],
     'database/migrations/2026_08_31_160000_add_performance_indexes.php' => [
         'pengajuan_status_created_idx',
@@ -34,6 +34,7 @@ foreach ($checks as $file => $needles) {
     if ($contents === false) {
         fwrite(STDERR, "[FAIL] Missing {$file}\n");
         $failed = true;
+
         continue;
     }
 

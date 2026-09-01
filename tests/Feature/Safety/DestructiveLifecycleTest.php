@@ -31,10 +31,10 @@ class DestructiveLifecycleTest extends TestCase
             'jurusan' => 'Test Major',
         ]);
 
-        $this->assertFalse((new UserPolicy())->delete($pic, $participantUser));
-        $this->assertFalse((new UserPolicy())->deleteAny($pic));
-        $this->assertFalse((new PesertaPolicy())->delete($pic, $peserta));
-        $this->assertFalse((new PesertaPolicy())->deleteAny($pic));
+        $this->assertFalse((new UserPolicy)->delete($pic, $participantUser));
+        $this->assertFalse((new UserPolicy)->deleteAny($pic));
+        $this->assertFalse((new PesertaPolicy)->delete($pic, $peserta));
+        $this->assertFalse((new PesertaPolicy)->deleteAny($pic));
     }
 
     public function test_soft_deleting_participant_does_not_destroy_pengajuan_history(): void

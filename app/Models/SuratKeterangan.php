@@ -18,11 +18,13 @@ class SuratKeterangan extends Model
         'generated_at' => 'datetime',
     ];
 
+    /** @return BelongsTo<Pengajuan, $this> */
     public function pengajuan(): BelongsTo
     {
         return $this->belongsTo(Pengajuan::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function generatedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'generated_by');

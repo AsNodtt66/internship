@@ -20,12 +20,14 @@ class Penilaian extends Model
         'diupload_at' => 'datetime',
     ];
 
+    /** @return BelongsTo<Pengajuan, $this> */
     public function pengajuan(): BelongsTo
     {
         return $this->belongsTo(Pengajuan::class);
     }
 
     /** PIC yang mengupload file PDF ini */
+    /** @return BelongsTo<User, $this> */
     public function diuploadOleh(): BelongsTo
     {
         return $this->belongsTo(User::class, 'diupload_oleh');

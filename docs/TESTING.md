@@ -189,3 +189,7 @@ Mandatory CI juga menjalankan migration + PHPUnit pada MySQL 8.4. Ini melengkapi
 ### CI green
 
 Jangan menyebut testing berhasil hanya karena satu job hijau. Target final adalah job `ci_green_gate`, yang bergantung pada backend PHP 8.4/8.5, MySQL integration, build, audits, dan seluruh Playwright browser gates.
+
+## P9 quality gate
+
+Untuk urutan gate kandidat P9, gunakan [P9 Test Strategy](P9-TEST-STRATEGY.md). Panduan tersebut membedakan hasil lokal, coverage CI, mutation testing, accessibility, visual regression, dan bukti GitHub Actions pada SHA yang sama.

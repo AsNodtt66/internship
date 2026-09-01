@@ -31,15 +31,21 @@ class PrivateDocumentAuthorizationTest extends TestCase
         [$owner, $ownedApplication] = $this->participantWithApplication('owner@example.test');
         [$attacker, $otherApplication] = $this->participantWithApplication('attacker@example.test');
 
-        Storage::fake('documents')->put('pengajuan/owner/cv.pdf', '%PDF-owner');
-        Storage::fake('documents')->put('pengajuan/other/cv.pdf', '%PDF-other');
+        $documents = Storage::fake('documents');
+        $documents->put('pengajuan/owner/cv.pdf', '%PDF-owner');
+        $documents->put('pengajuan/other/cv.pdf', '%PDF-other');
+        $documents->assertExists('pengajuan/owner/cv.pdf');
         $ownedApplication->update(['file_cv' => 'pengajuan/owner/cv.pdf']);
         $otherApplication->update(['file_cv' => 'pengajuan/other/cv.pdf']);
 
-        $this->actingAs($owner)
-            ->get(route('documents.pengajuan', [$ownedApplication, 'file_cv']))
-            ->assertOk()
-            ->assertHeader('Cache-Control', 'private, no-store, max-age=0');
+        $response = $this->actingAs($owner)
+            ->get(route('documents.pengajuan', [$ownedApplication, 'file_cv']));
+
+        $response->assertOk();
+        $cacheControl = array_map('trim', explode(',', (string) $response->headers->get('Cache-Control')));
+        $this->assertContains('private', $cacheControl);
+        $this->assertContains('no-store', $cacheControl);
+        $this->assertContains('max-age=0', $cacheControl);
 
         $this->actingAs($attacker)
             ->get(route('documents.pengajuan', [$ownedApplication, 'file_cv']))

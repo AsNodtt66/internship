@@ -72,7 +72,7 @@ return new class extends Migration
             ->havingRaw('COUNT(*) > 1');
 
         if ($query->exists()) {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 'Cannot add unique constraint to %s (%s): duplicate production data exists. Reconcile duplicates first, then rerun migrations.',
                 $table,
                 implode(', ', $columns),

@@ -9,6 +9,7 @@ $expectContains = static function (string $file, array $needles) use ($root, &$f
     $path = $root.'/'.$file;
     if (! is_file($path)) {
         $failures[] = "missing: {$file}";
+
         return;
     }
     $content = file_get_contents($path) ?: '';
@@ -23,6 +24,7 @@ $expectNotContains = static function (string $file, array $needles) use ($root, 
     $path = $root.'/'.$file;
     if (! is_file($path)) {
         $failures[] = "missing: {$file}";
+
         return;
     }
     $content = file_get_contents($path) ?: '';

@@ -13,15 +13,15 @@ class PengajuanTimelineService
      * GM -> Kepala Bagian SDM -> Staff SDM.
      */
     protected const STEPS = [
-        'pengajuan'     => 'Pengajuan',
-        'verifikasi_pic'=> 'Verifikasi PIC',
-        'gm'            => 'Persetujuan GM',
-        'kabag_sdm'     => 'Persetujuan Kepala Bagian SDM',
-        'staff_sdm'     => 'Persetujuan Staf SDM',
+        'pengajuan' => 'Pengajuan',
+        'verifikasi_pic' => 'Verifikasi PIC',
+        'gm' => 'Persetujuan GM',
+        'kabag_sdm' => 'Persetujuan Kepala Bagian SDM',
+        'staff_sdm' => 'Persetujuan Staf SDM',
         'kepala_bagian' => 'Persetujuan Kepala Bagian Tujuan',
-        'pembimbing'    => 'Penetapan Pembimbing',
+        'pembimbing' => 'Penetapan Pembimbing',
         'surat_balasan' => 'Surat Balasan',
-        'selesai'       => 'Penyelesaian Administrasi',
+        'selesai' => 'Penyelesaian Administrasi',
     ];
 
     /**
@@ -30,7 +30,7 @@ class PengajuanTimelineService
      */
     public function build(Pengajuan $pengajuan): array
     {
-        $status    = $pengajuan->status;
+        $status = $pengajuan->status;
         $approvals = $pengajuan->approvalWorkflows()->orderBy('urutan')->get(['urutan', 'status']);
 
         $result = [];
@@ -51,13 +51,13 @@ class PengajuanTimelineService
             'pengajuan' => $status === 'draft' ? 'belum_diproses' : 'selesai',
 
             'verifikasi_pic' => match (true) {
-                $status === 'draft'            => 'belum_diproses',
-                $status === 'diajukan'         => 'sedang_diproses',
-                $status === 'dokumen_ditolak'  => 'ditolak',
-                default                        => 'selesai',
+                $status === 'draft' => 'belum_diproses',
+                $status === 'diajukan' => 'sedang_diproses',
+                $status === 'dokumen_ditolak' => 'ditolak',
+                default => 'selesai',
             },
 
-            'gm'        => $this->resolveApprovalStep(1, $status, $approvals),
+            'gm' => $this->resolveApprovalStep(1, $status, $approvals),
             'kabag_sdm' => $this->resolveApprovalStep(2, $status, $approvals),
             'staff_sdm' => $this->resolveApprovalStep(3, $status, $approvals),
             // Kepala Bagian Tujuan sekarang tahap disposisi ke-4, mekanisme
@@ -84,6 +84,8 @@ class PengajuanTimelineService
                 in_array($status, ['selesai', 'perlu_perpanjangan']) => 'sedang_diproses',
                 default => 'belum_diproses',
             },
+
+            default => 'belum_diproses',
         };
     }
 
@@ -116,7 +118,7 @@ class PengajuanTimelineService
 
         return match ($step->status) {
             'ditandatangani' => 'selesai',
-            'menunggu'  => ($langkahAktif && $langkahAktif->urutan === $step->urutan)
+            'menunggu' => ($langkahAktif && $langkahAktif->urutan === $step->urutan)
                 ? 'sedang_diproses'
                 : 'belum_diproses',
             default => 'belum_diproses',

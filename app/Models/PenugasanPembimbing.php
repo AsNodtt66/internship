@@ -34,34 +34,31 @@ class PenugasanPembimbing extends Model
         'ditetapkan_at' => 'datetime',
     ];
 
+    /** @return BelongsTo<Pengajuan, $this> */
     public function pengajuan(): BelongsTo
     {
         return $this->belongsTo(Pengajuan::class);
     }
 
-    /**
-     * Dipilih dari dropdown data master Pembimbing Lapangan. Ini yang
-     * jadi sumber utama sekarang (lihat PengajuanWorkflowService::usulkanPembimbing()).
-     */
+    /** @return BelongsTo<PembimbingLapangan, $this> */
     public function pembimbingLapangan(): BelongsTo
     {
         return $this->belongsTo(PembimbingLapangan::class);
     }
 
-    /**
-     * Hanya terisi kalau pembimbing memang punya akun User (opsional).
-     * Untuk kasus normal (tanpa akun), pakai namaTampil() di bawah.
-     */
+    /** @return BelongsTo<User, $this> */
     public function pembimbing(): BelongsTo
     {
         return $this->belongsTo(User::class, 'pembimbing_id');
     }
 
+    /** @return BelongsTo<User, $this> */
     public function diusulkanOleh(): BelongsTo
     {
         return $this->belongsTo(User::class, 'diusulkan_oleh');
     }
 
+    /** @return BelongsTo<User, $this> */
     public function ditetapkanOleh(): BelongsTo
     {
         return $this->belongsTo(User::class, 'ditetapkan_oleh');
@@ -75,6 +72,6 @@ class PenugasanPembimbing extends Model
      */
     public function getNamaTampilAttribute(): ?string
     {
-        return $this->pembimbingLapangan?->nama ?? $this->nama_pembimbing ?? $this->pembimbing?->name;
+        return $this->pembimbingLapangan->nama ?? $this->nama_pembimbing ?? $this->pembimbing?->name;
     }
 }

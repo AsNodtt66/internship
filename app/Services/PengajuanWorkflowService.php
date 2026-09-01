@@ -7,11 +7,11 @@ use App\Models\ApprovalWorkflow;
 use App\Models\DokumenPersyaratan;
 use App\Models\Evaluasi;
 use App\Models\FormulirPenilaian;
-use App\Models\Pengajuan;
 use App\Models\PembimbingLapangan;
+use App\Models\Pengajuan;
 use App\Models\Penilaian;
-use App\Models\Perpanjangan;
 use App\Models\PenugasanPembimbing;
+use App\Models\Perpanjangan;
 use App\Models\RiwayatStatus;
 use App\Models\Role;
 use App\Models\SuratBalasan;
@@ -19,8 +19,8 @@ use App\Models\SuratKeterangan;
 use App\Models\User;
 use App\Services\Workflow\ExtensionReminderService;
 use App\Services\Workflow\WorkflowNotificationService;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use RuntimeException;
 
 /**
@@ -250,11 +250,11 @@ class PengajuanWorkflowService
         $this->pastikanRole($pic, RoleSlug::PIC);
         $this->pastikanStatus($pengajuan, ['diajukan', 'verifikasi_dokumen', 'dokumen_ditolak']);
 
-        $bagianLama = $pengajuan->bagianTujuan?->nama_bagian ?? '-';
+        $bagianLama = $pengajuan->bagianTujuan->nama_bagian;
 
         $pengajuan->update(['bagian_tujuan_id' => $bagianTujuanBaruId]);
 
-        $bagianBaru = $pengajuan->fresh()->bagianTujuan?->nama_bagian ?? '-';
+        $bagianBaru = $pengajuan->fresh()->bagianTujuan->nama_bagian;
 
         $this->catatRiwayat(
             $pengajuan,
@@ -460,7 +460,7 @@ class PengajuanWorkflowService
 
         $this->catatRiwayat($pengajuan, 'menunggu_penetapan_pembimbing', 'berjalan', "PIC menetapkan Pembimbing Lapangan ({$penugasan->nama_tampil}) & menerbitkan Surat Balasan resmi.");
 
-        $this->notifikasiPeserta($pengajuan, 'Daftar & Jadwal PKL/Penelitian', "Selamat! Anda ditempatkan di {$pengajuan->bagianTujuan?->nama_bagian} dengan Pembimbing Lapangan {$penugasan->nama_tampil}, periode {$pengajuan->tanggal_mulai?->format('d-m-Y')} s/d {$pengajuan->tanggal_selesai?->format('d-m-Y')}.");
+        $this->notifikasiPeserta($pengajuan, 'Daftar & Jadwal PKL/Penelitian', "Selamat! Anda ditempatkan di {$pengajuan->bagianTujuan?->nama_bagian} dengan Pembimbing Lapangan {$penugasan->nama_tampil}, periode {$pengajuan->tanggal_mulai->format('d-m-Y')} s/d {$pengajuan->tanggal_selesai->format('d-m-Y')}.");
 
         $kepalaBagian = $pengajuan->bagianTujuan?->kepalaBagian;
         if ($kepalaBagian) {
@@ -636,10 +636,10 @@ class PengajuanWorkflowService
         $this->catatRiwayat($pengajuan, $statusLama, $statusBaru, "Nilai rata-rata {$nilaiAkhir} (informasi), hasil ditentukan PIC: {$hasil}. Dinilai oleh {$penilai->name}.");
 
         if ($hasil === 'selesai') {
-            $this->notifikasiPeserta($pengajuan, 'PKL/Penelitian Selesai', "Selamat, PKL/Penelitian Anda dinyatakan selesai.");
+            $this->notifikasiPeserta($pengajuan, 'PKL/Penelitian Selesai', 'Selamat, PKL/Penelitian Anda dinyatakan selesai.');
             $this->notifikasiRole($pengajuan, 'pic', 'Hasil Evaluasi: Selesai', "Pengajuan {$pengajuan->nomor_agenda} telah dinilai Pembimbing dengan hasil Selesai. Silakan terbitkan Surat Keterangan Selesai PKL.");
         } else {
-            $this->notifikasiPeserta($pengajuan, 'Rekomendasi Perpanjangan', "PIC merekomendasikan perpanjangan berdasarkan hasil penilaian Anda. PIC akan menghubungi terkait kemungkinan perpanjangan.");
+            $this->notifikasiPeserta($pengajuan, 'Rekomendasi Perpanjangan', 'PIC merekomendasikan perpanjangan berdasarkan hasil penilaian Anda. PIC akan menghubungi terkait kemungkinan perpanjangan.');
             $this->notifikasiRole($pengajuan, 'pic', 'Hasil Evaluasi: Perlu Perpanjangan', "Pengajuan {$pengajuan->nomor_agenda} telah dinilai Pembimbing dengan hasil Perlu Perpanjangan. Silakan ajukan perpanjangan.");
         }
 
@@ -1160,12 +1160,8 @@ class PengajuanWorkflowService
      * Sisa hari sebelum tanggal_selesai pengajuan (negatif kalau sudah
      * lewat). Dipakai untuk peringatan "masa PKL akan segera berakhir".
      */
-    public function sisaHariPkl(Pengajuan $pengajuan): ?int
+    public function sisaHariPkl(Pengajuan $pengajuan): int
     {
-        if (! $pengajuan->tanggal_selesai) {
-            return null;
-        }
-
         return (int) now()->startOfDay()->diffInDays($pengajuan->tanggal_selesai->startOfDay(), false);
     }
 
@@ -1179,9 +1175,7 @@ class PengajuanWorkflowService
             return false;
         }
 
-        $sisaHari = $this->sisaHariPkl($pengajuan);
-
-        return $sisaHari !== null && $sisaHari <= self::AMBANG_PERINGATAN_HARI;
+        return $this->sisaHariPkl($pengajuan) <= self::AMBANG_PERINGATAN_HARI;
     }
 
     /**
@@ -1221,8 +1215,8 @@ class PengajuanWorkflowService
      */
     private function validasiDurasiMaksimal(string $tanggalMulai, string $tanggalSelesai): void
     {
-        $mulai = \Illuminate\Support\Carbon::parse($tanggalMulai);
-        $selesai = \Illuminate\Support\Carbon::parse($tanggalSelesai);
+        $mulai = Carbon::parse($tanggalMulai);
+        $selesai = Carbon::parse($tanggalSelesai);
         $batasMaksimal = $mulai->copy()->addMonths(self::MASA_PKL_MAKSIMAL_BULAN);
 
         if ($selesai->gt($batasMaksimal)) {

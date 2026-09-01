@@ -28,12 +28,14 @@ class GmDepartmentUniversityWidget extends Widget
             ->orderByDesc('total')
             ->get();
 
-        $maks = max(1, (int) ($data->max('total') ?? 1));
+        $maks = max(1, (int) ($data->max(
+            static fn (Pengajuan $pengajuan): mixed => $pengajuan->getAttribute('total')
+        ) ?? 1));
 
-        return $data->map(fn ($row) => [
-            'nama' => $row->nama,
-            'total' => (int) $row->total,
-            'persen' => max(6, round(((int) $row->total) / $maks * 100)),
+        return $data->map(static fn (Pengajuan $pengajuan): array => [
+            'nama' => $pengajuan->getAttribute('nama'),
+            'total' => (int) $pengajuan->getAttribute('total'),
+            'persen' => max(6, round(((int) $pengajuan->getAttribute('total')) / $maks * 100)),
         ])->values()->all();
     }
 
@@ -46,7 +48,10 @@ class GmDepartmentUniversityWidget extends Widget
             ->orderByDesc('total')
             ->limit(5)
             ->get()
-            ->map(fn ($row) => ['nama' => $row->nama, 'total' => (int) $row->total])
+            ->map(static fn (Pengajuan $pengajuan): array => [
+                'nama' => $pengajuan->getAttribute('nama'),
+                'total' => (int) $pengajuan->getAttribute('total'),
+            ])
             ->all();
     }
 }

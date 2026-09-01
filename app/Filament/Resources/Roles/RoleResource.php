@@ -2,16 +2,16 @@
 
 namespace App\Filament\Resources\Roles;
 
-use App\Filament\Resources\Roles\Pages;
 use App\Filament\Resources\Roles\Schemas\RoleForm;
 use App\Filament\Resources\Roles\Tables\RolesTable;
 use App\Models\Role;
 use BackedEnum;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
+use UnitEnum;
 
 class RoleResource extends Resource
 {
@@ -42,15 +42,14 @@ class RoleResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return \Illuminate\Support\Facades\Auth::user()?->role?->slug === 'pic';
+        return Auth::user()?->role?->slug === 'pic';
     }
-
 
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListRoles::route('/'),
-            'edit'   => Pages\EditRole::route('/{record}/edit'),
+            'index' => Pages\ListRoles::route('/'),
+            'edit' => Pages\EditRole::route('/{record}/edit'),
         ];
     }
 }

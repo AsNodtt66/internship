@@ -4,10 +4,13 @@ namespace App\Filament\Peserta\Resources\PengajuanResource\Pages;
 
 use App\Filament\Peserta\Resources\PengajuanResource;
 use App\Models\DokumenPersyaratan;
+use App\Models\Pengajuan;
+use App\Models\Peserta;
 use App\Services\PengajuanWorkflowService;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
 
+/** @property Pengajuan $record */
 class CreatePengajuan extends CreateRecord
 {
     protected static string $resource = PengajuanResource::class;
@@ -50,7 +53,7 @@ class CreatePengajuan extends CreateRecord
         // tidak crash kalau (karena sebab apa pun) baris Peserta belum ada untuk
         // user ini. universitas/jurusan diberi placeholder kalau kosong karena
         // wajib diisi (NOT NULL) di skema tabel pesertas.
-        $peserta = Auth::user()->peserta ?? \App\Models\Peserta::firstOrCreate(
+        $peserta = Auth::user()->peserta ?? Peserta::firstOrCreate(
             ['user_id' => Auth::id()],
             ['universitas' => '-', 'jurusan' => '-']
         );

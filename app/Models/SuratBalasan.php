@@ -26,18 +26,21 @@ class SuratBalasan extends Model
         'diterbitkan_at' => 'datetime',
     ];
 
+    /** @return BelongsTo<Pengajuan, $this> */
     public function pengajuan(): BelongsTo
     {
         return $this->belongsTo(Pengajuan::class);
     }
 
     /** PIC yang membuat draft */
+    /** @return BelongsTo<User, $this> */
     public function generatedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'generated_by');
     }
 
     /** Kepala Bagian yang menyetujui & menerbitkan resmi */
+    /** @return BelongsTo<User, $this> */
     public function diterbitkanOleh(): BelongsTo
     {
         return $this->belongsTo(User::class, 'diterbitkan_oleh');

@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable implements FilamentUser
@@ -42,36 +42,35 @@ class User extends Authenticatable implements FilamentUser
         ];
     }
 
+    /** @return BelongsTo<Role, $this> */
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
     }
 
+    /** @return BelongsTo<Bagian, $this> */
     public function bagian(): BelongsTo
     {
         return $this->belongsTo(Bagian::class);
     }
 
+    /** @return HasOne<Peserta, $this> */
     public function peserta(): HasOne
     {
         return $this->hasOne(Peserta::class);
     }
 
-    /**
-     * Daftar penugasan pembimbing di mana user ini berperan sebagai
-     * Pembimbing Lapangan. Dipakai untuk menghitung beban bimbingan aktif
-     * saat Kepala Bagian memilih pembimbing (lihat aksi Tetapkan Pembimbing).
-     */
+    /** @return HasMany<PenugasanPembimbing, $this> */
     public function penugasanPembimbings(): HasMany
     {
         return $this->hasMany(PenugasanPembimbing::class, 'pembimbing_id');
     }
 
+    /** @return HasMany<Notifikasi, $this> */
     public function notifikasis(): HasMany
     {
         return $this->hasMany(Notifikasi::class);
     }
-
 
     public function hasRole(RoleSlug|string $role): bool
     {

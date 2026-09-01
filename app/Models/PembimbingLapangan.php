@@ -19,17 +19,20 @@ class PembimbingLapangan extends Model
         'is_active' => 'boolean',
     ];
 
+    /** @return BelongsTo<Bagian, $this> */
     public function bagian(): BelongsTo
     {
         return $this->belongsTo(Bagian::class);
     }
 
     /** Opsional -- hanya terisi kalau pembimbing ini memang punya akun login. */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return HasMany<PenugasanPembimbing, $this> */
     public function penugasanPembimbings(): HasMany
     {
         return $this->hasMany(PenugasanPembimbing::class);

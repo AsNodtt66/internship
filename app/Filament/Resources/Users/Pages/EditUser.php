@@ -3,9 +3,11 @@
 namespace App\Filament\Resources\Users\Pages;
 
 use App\Filament\Resources\Users\UserResource;
+use App\Models\User;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
 
+/** @property User $record */
 class EditUser extends EditRecord
 {
     protected static string $resource = UserResource::class;

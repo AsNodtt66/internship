@@ -3,6 +3,7 @@
 namespace App\Filament\Peserta\Pages\Auth;
 
 use App\Models\Peserta;
+use App\Models\User;
 use Filament\Auth\Pages\EditProfile as BaseEditProfile;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
@@ -51,7 +52,7 @@ class EditProfile extends BaseEditProfile
      */
     protected function fillForm(): void
     {
-        $user = $this->getUser();
+        $user = $this->getPesertaUser();
         $data = $user->attributesToArray();
 
         $peserta = $user->peserta;
@@ -71,6 +72,10 @@ class EditProfile extends BaseEditProfile
      */
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
+        if (! $record instanceof User) {
+            throw new \LogicException('Profil peserta harus menggunakan model pengguna aplikasi.');
+        }
+
         $pesertaData = [
             'nim' => $data['nim'] ?? null,
             'universitas' => $data['universitas'] ?? null,
@@ -80,10 +85,21 @@ class EditProfile extends BaseEditProfile
 
         unset($data['nim'], $data['universitas'], $data['jurusan'], $data['no_hp']);
 
-        $record = parent::handleRecordUpdate($record, $data);
+        parent::handleRecordUpdate($record, $data);
 
         Peserta::updateOrCreate(['user_id' => $record->id], $pesertaData);
 
         return $record;
+    }
+
+    private function getPesertaUser(): User
+    {
+        $user = $this->getUser();
+
+        if (! $user instanceof User) {
+            throw new \LogicException('Panel peserta harus menggunakan model pengguna aplikasi.');
+        }
+
+        return $user;
     }
 }

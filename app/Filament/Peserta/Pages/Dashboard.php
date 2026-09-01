@@ -3,6 +3,7 @@
 namespace App\Filament\Peserta\Pages;
 
 use App\Filament\Peserta\Resources\PengajuanResource;
+use App\Models\Notifikasi;
 use App\Models\Pengajuan;
 use App\Services\PengajuanTimelineService;
 use App\Support\Ui\PengajuanStatusPresenter;
@@ -43,7 +44,7 @@ class Dashboard extends Page
             $this->dokumen = $this->pengajuan->dokumenPersyaratans()->get()->toArray();
         }
 
-        $this->notifikasi = \App\Models\Notifikasi::where('user_id', Auth::id())
+        $this->notifikasi = Notifikasi::where('user_id', Auth::id())
             ->latest()
             ->limit(10)
             ->get()

@@ -4,6 +4,7 @@ namespace App\Filament\Peserta\Pages\Auth;
 
 use App\Models\Peserta;
 use App\Models\Role;
+use App\Models\User;
 use App\Services\DynamicFormFieldBuilder;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Auth\Events\Registered;
@@ -15,7 +16,9 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
+use Livewire\Features\SupportRedirects\Redirector;
 
 class Register extends BaseRegister
 {
@@ -88,7 +91,7 @@ class Register extends BaseRegister
         // bawaan) supaya kontrak return type register() tetap terpenuhi.
         return new class implements RegistrationResponse
         {
-            public function toResponse($request): \Illuminate\Http\RedirectResponse | \Livewire\Features\SupportRedirects\Redirector
+            public function toResponse($request): RedirectResponse|Redirector
             {
                 return redirect(Filament::getLoginUrl());
             }
@@ -137,6 +140,10 @@ class Register extends BaseRegister
                 'role_id' => $roleId,
                 'is_active' => true,
             ]);
+
+            if (! $user instanceof User) {
+                throw new \LogicException('Panel peserta harus membuat model pengguna aplikasi.');
+            }
 
             Peserta::create([
                 'user_id' => $user->id,

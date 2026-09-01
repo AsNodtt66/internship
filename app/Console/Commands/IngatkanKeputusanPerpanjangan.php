@@ -19,7 +19,8 @@ class IngatkanKeputusanPerpanjangan extends Command
 
     public function handle(PengajuanWorkflowService $service): int
     {
-        $hHari = $this->option('h') !== null ? (int) $this->option('h') : null;
+        $optionHari = $this->option('h');
+        $hHari = $optionHari ? (int) $optionHari : null;
 
         $jumlah = $service->kirimPengingatKeputusanPerpanjangan($hHari);
 

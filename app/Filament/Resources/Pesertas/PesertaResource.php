@@ -2,16 +2,16 @@
 
 namespace App\Filament\Resources\Pesertas;
 
+use App\Filament\Resources\Pesertas\Schemas\PesertaForm;
+use App\Filament\Resources\Pesertas\Tables\PesertasTable;
 use App\Models\Peserta;
 use BackedEnum;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use App\Filament\Resources\Pesertas\Pages;
-use App\Filament\Resources\Pesertas\Schemas\PesertaForm;
-use App\Filament\Resources\Pesertas\Tables\PesertasTable;
+use Illuminate\Support\Facades\Auth;
+use UnitEnum;
 
 class PesertaResource extends Resource
 {
@@ -42,15 +42,15 @@ class PesertaResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return \Illuminate\Support\Facades\Auth::user()?->role?->slug === 'pic';
+        return Auth::user()?->role?->slug === 'pic';
     }
 
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListPesertas::route('/'),
+            'index' => Pages\ListPesertas::route('/'),
             'create' => Pages\CreatePeserta::route('/create'),
-            'edit'   => Pages\EditPeserta::route('/{record}/edit'),
+            'edit' => Pages\EditPeserta::route('/{record}/edit'),
         ];
     }
 }

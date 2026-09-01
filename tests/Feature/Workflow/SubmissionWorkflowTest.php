@@ -18,8 +18,11 @@ class SubmissionWorkflowTest extends TestCase
     use RefreshDatabase;
 
     private PengajuanWorkflowService $workflow;
+
     private User $pesertaUser;
+
     private User $pic;
+
     private Pengajuan $pengajuan;
 
     protected function setUp(): void
@@ -115,5 +118,34 @@ class SubmissionWorkflowTest extends TestCase
         $this->assertSame('AGENDA-001', $result->nomor_agenda);
         $this->assertSame([1, 2, 3, 4], $result->approvalWorkflows()->orderBy('urutan')->pluck('urutan')->all());
         $this->assertSame(4, $result->approvalWorkflows()->count());
+    }
+
+    public function test_fourth_approval_step_persists_pending_mentor_assignment_status(): void
+    {
+        $gm = User::factory()->create(['role_id' => Role::query()->where('slug', 'gm')->value('id')]);
+        $kabagSdm = User::factory()->create(['role_id' => Role::query()->where('slug', 'kabag_sdm')->value('id')]);
+        $staffSdm = User::factory()->create(['role_id' => Role::query()->where('slug', 'staff_sdm')->value('id')]);
+        $kepalaBagian = User::factory()->create(['role_id' => Role::query()->where('slug', 'kepala_bagian')->value('id')]);
+
+        $this->pengajuan->bagianTujuan->update(['kepala_bagian_id' => $kepalaBagian->id]);
+        $this->pengajuan->update(['status' => 'verifikasi_dokumen']);
+
+        $this->actingAs($this->pic);
+        $this->workflow->rekapDanMulaiApproval($this->pengajuan->fresh(), 'AGENDA-004');
+
+        foreach ([$gm, $kabagSdm, $staffSdm, $kepalaBagian] as $index => $approver) {
+            $step = $this->pengajuan->approvalWorkflows()->where('urutan', $index + 1)->firstOrFail();
+
+            $this->workflow->tandatanganiLangkah(
+                $step,
+                $approver,
+                catatanCalonPembimbing: $index === 3 ? 'Tetapkan pembimbing dari Bagian Teknologi Informasi.' : null,
+            );
+        }
+
+        $this->assertDatabaseHas('pengajuans', [
+            'id' => $this->pengajuan->id,
+            'status' => 'menunggu_penetapan_pembimbing',
+        ]);
     }
 }

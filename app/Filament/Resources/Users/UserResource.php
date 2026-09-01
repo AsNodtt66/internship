@@ -3,9 +3,7 @@
 namespace App\Filament\Resources\Users;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use BackedEnum;
-use UnitEnum;
 use Filament\Actions;
 use Filament\Forms\Components;
 use Filament\Resources\Resource;
@@ -13,7 +11,8 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
-use App\Filament\Resources\Users\Pages;
+use Illuminate\Support\Facades\Auth;
+use UnitEnum;
 
 class UserResource extends Resource
 {
@@ -145,16 +144,15 @@ class UserResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return \Illuminate\Support\Facades\Auth::user()?->role?->slug === 'pic';
+        return Auth::user()?->role?->slug === 'pic';
     }
-
 
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListUsers::route('/'),
+            'index' => Pages\ListUsers::route('/'),
             'create' => Pages\CreateUser::route('/create'),
-            'edit'   => Pages\EditUser::route('/{record}/edit'),
+            'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
 }

@@ -2,9 +2,9 @@
 
 Aplikasi pengelolaan PKL/Penelitian berbasis **Laravel 12 + Filament 4**. Aplikasi mencakup portal peserta, verifikasi dokumen, disposisi berjenjang, penetapan pembimbing, evaluasi/penilaian, perpanjangan, notifikasi, surat resmi, audit trail, queue, scheduler, dan health checks.
 
-Baseline ini berisi hardening **P0–P3**, **P4 modernization-readiness**, **P5 UI/UX + accessibility baseline**, dan **P6 performance engineering**, **P7 validation framework**, serta **P8 automated quality gate + Playwright E2E** dengan prinsip: perbaiki root cause, pertahankan business flow yang sudah ada, hindari rewrite/overengineering, dan setiap perubahan penting harus dapat diverifikasi.
+Baseline ini mencakup hardening P0-P3, kesiapan modernisasi P4, UI dan aksesibilitas P5, performance engineering P6, validasi release candidate P7, quality gate Playwright P8, serta penguatan kualitas test dan CI P9. Setiap perubahan penting harus dapat diuji dan dibuktikan.
 
-> **Fokus P8:** project testing dan CI green. Staging/production deployment tidak menjadi requirement pipeline karena deployment akhir akan ditangani server perusahaan.
+> **Fokus P9:** kualitas test dan CI. Staging/production deployment tidak menjadi requirement pipeline karena deployment akhir akan ditangani server perusahaan.
 
 > **Status P4:** source compatibility sudah diterapkan. Lockfile utama tetap baseline P3 sampai `scripts/upgrade/p4/modernize.*` dijalankan pada environment online dan seluruh quality gate lulus. Jangan mengedit lockfile manual.
 
@@ -48,6 +48,19 @@ Cek komputer Anda:
 ```bash
 composer doctor
 ```
+
+## Dokumentasi
+
+Dokumentasi lengkap dimulai dari [Documentation Index](docs/README.md). Pilih panduan berdasarkan pekerjaan Anda:
+
+| Kebutuhan | Dokumen |
+| --- | --- |
+| Setup lokal | [Quick Start](docs/QUICK-START.md) |
+| Memahami kode dan workflow | [Architecture](docs/ARCHITECTURE.md) dan [Business Workflow](docs/BUSINESS-WORKFLOW.md) |
+| Mengubah aplikasi dengan aman | [Developer Workflow](docs/DEVELOPER-WORKFLOW.md) dan [Testing](docs/TESTING.md) |
+| Menjalankan gate P9 | [P9 Test Strategy](docs/P9-TEST-STRATEGY.md) |
+| Menyiapkan rilis | [Release Runbook](docs/RELEASE-RUNBOOK.md) |
+| Memahami perkembangan P1-P9 | [Peta Fase](docs/PHASES-P1-P9.md) |
 
 ## Arsitektur singkat
 
@@ -105,29 +118,29 @@ tests/                     # unit/feature/regression tests
 
 
 
-## P8 automated testing & CI green
+## Testing dan CI
 
-P8 menjadikan test sebagai target utama: fast PHPUnit tetap berjalan dengan SQLite, integration suite berjalan dengan MySQL 8.4, dan browser testing menggunakan Playwright terhadap Laravel lokal (`webServer`) tanpa staging URL.
+Kualitas proyek diperiksa bertingkat. PHPStan dan PHPUnit menangkap masalah source dan domain. MySQL integration memeriksa perilaku database. Playwright menguji alur pengguna pada browser nyata. Coverage dan mutation testing menguji apakah test suite benar-benar memberi sinyal saat source berubah.
 
-Quick path:
+Sebelum membuat commit, jalankan:
 
-```bash
-export APP_ENV=testing
-# set DB_* ke database testing disposable
-bash scripts/e2e/reset-test-db.sh
+```powershell
+php vendor/bin/pint --test
+php vendor/bin/phpstan analyse --memory-limit=1G --no-progress
+php artisan test
 npm run build
-bash scripts/e2e/install-playwright.sh chromium
-bash scripts/e2e/run.sh --project=chromium --grep @critical
+npm run test:e2e:critical
 ```
 
-Full matrix:
+Untuk kandidat yang akan di-push, lanjutkan dengan Chromium penuh, browser lintas platform, dan flake check. Coverage membutuhkan PCOV atau Xdebug; CI memakai PCOV.
 
-```bash
-bash scripts/e2e/install-playwright.sh
-bash scripts/e2e/run.sh
+```powershell
+npm run test:e2e:chromium
+npm run test:e2e:cross-browser
+npx playwright test --project=chromium --grep @critical --repeat-each=3
 ```
 
-CI dianggap sukses hanya setelah job **`ci_green_gate`** berjalan. Lihat **[P8 Playwright & CI](docs/P8-PLAYWRIGHT-CI.md)** dan **[Business Rules](docs/BUSINESS-RULES.md)**.
+Baca [P9 Test Strategy](docs/P9-TEST-STRATEGY.md) untuk urutan lengkap, lokasi artefak, coverage, mutation, accessibility, visual regression, dan cara memverifikasi GitHub Actions pada SHA yang sama. Status bukti terbaru ada di [P9 Quality Gate](docs/P9-QUALITY-GATE.md).
 
 ## P7 release candidate validation
 

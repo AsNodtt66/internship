@@ -12,11 +12,13 @@ class DokumenPersyaratan extends Model
         'catatan_verifikasi', 'verified_by', 'verified_at', 'uploaded_at',
     ];
 
+    /** @return BelongsTo<Pengajuan, $this> */
     public function pengajuan(): BelongsTo
     {
         return $this->belongsTo(Pengajuan::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function verifiedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'verified_by');

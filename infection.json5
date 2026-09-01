@@ -1,0 +1,22 @@
+{
+  "$schema": "./vendor/infection/infection/resources/schema.json",
+  "timeout": 15,
+  "threads": 1,
+  "source": {
+    "directories": [
+      "app/Policies",
+      "app/Support/Authorization",
+      "app/Support/Documents",
+      "app/Services"
+    ]
+  },
+  "logs": {
+    "text": "infection-log/infection.log",
+    "summary": "infection-log/summary.log",
+    "summaryJson": "infection-log/summary.json",
+    "html": "infection-log/index.html"
+  },
+  "phpUnit": {
+    "configDir": "."
+  }
+}
