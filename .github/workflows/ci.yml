@@ -312,7 +312,7 @@ jobs:
         run: |
           if ! output="$(npx playwright test --project=chromium 2>&1)"; then
             printf '%s\n' "$output"
-            printf '::error title=Chromium E2E failed::%s\n' "$(printf '%s' "$output" | tr '\n' ' ')"
+            printf '::error title=Chromium E2E failed::%s\n' "$(printf '%s' "$output" | tail -n 80 | tr '\n' ' ')"
             exit 1
           fi
           printf '%s\n' "$output"
@@ -388,7 +388,7 @@ jobs:
         run: |
           if ! output="$(npx playwright test --project=firefox --project=webkit --project=mobile-chrome 2>&1)"; then
             printf '%s\n' "$output"
-            printf '::error title=Cross-browser E2E failed::%s\n' "$(printf '%s' "$output" | tr '\n' ' ')"
+            printf '::error title=Cross-browser E2E failed::%s\n' "$(printf '%s' "$output" | tail -n 80 | tr '\n' ' ')"
             exit 1
           fi
           printf '%s\n' "$output"
