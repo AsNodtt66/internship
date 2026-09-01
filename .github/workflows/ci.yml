@@ -39,6 +39,7 @@ jobs:
       - name: Prepare testing environment
         run: |
           cp .env.testing.example .env
+          mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs
           sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
           sed -i 's#^DB_DATABASE=.*#DB_DATABASE=:memory:#' .env
           if ! output="$(php artisan key:generate --force 2>&1)"; then
@@ -90,6 +91,7 @@ jobs:
       - name: Prepare SQLite test environment
         run: |
           cp .env.testing.example .env
+          mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs
           sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
           sed -i 's#^DB_DATABASE=.*#DB_DATABASE=:memory:#' .env
           php artisan key:generate --force
@@ -142,6 +144,7 @@ jobs:
       - name: Prepare environment
         run: |
           cp .env.testing.example .env
+          mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs
           php artisan key:generate --force
           php artisan package:discover --ansi
           mkdir -p test-results
@@ -175,6 +178,7 @@ jobs:
       - name: Prepare SQLite test environment
         run: |
           cp .env.testing.example .env
+          mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs
           sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
           sed -i 's#^DB_DATABASE=.*#DB_DATABASE=:memory:#' .env
           php artisan key:generate --force
@@ -206,6 +210,7 @@ jobs:
       - name: Prepare SQLite test environment
         run: |
           cp .env.testing.example .env
+          mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs
           sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
           sed -i 's#^DB_DATABASE=.*#DB_DATABASE=:memory:#' .env
           php artisan key:generate --force
@@ -225,14 +230,20 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: bcmath, curl, mbstring, dom, xml, xmlwriter, intl, fileinfo, zip, pdo_sqlite
+          coverage: none
+          tools: composer:v2
       - uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-      - name: Install Node dependencies
-        run: npm ci --no-fund
-      - name: Prepare frontend environment
-        run: cp .env.testing.example .env
+      - name: Install build dependencies
+        run: |
+          composer install --prefer-dist --no-interaction --no-progress --no-scripts
+          npm ci --no-fund
       - name: Build frontend
         run: |
           if ! output="$(npm run build 2>&1)"; then
@@ -290,6 +301,7 @@ jobs:
       - name: Prepare deterministic E2E database
         run: |
           cp .env.testing.example .env
+          mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs
           php artisan key:generate --force
           php artisan package:discover --ansi
           php artisan migrate:fresh --force
@@ -359,6 +371,7 @@ jobs:
       - name: Prepare deterministic E2E database
         run: |
           cp .env.testing.example .env
+          mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs
           php artisan key:generate --force
           php artisan package:discover --ansi
           php artisan migrate:fresh --force
