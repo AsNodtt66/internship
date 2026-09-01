@@ -120,7 +120,7 @@ Command reminder tetap `withoutOverlapping()` dan sekarang mencatat success/fail
 `.gitlab-ci.yml` menyediakan:
 
 1. PHP syntax + application bootstrap.
-2. Backend tests pada PHP 8.4 dan PHP 8.5.
+2. Backend tests pada PHP 8.3 dan PHP 8.4.
 3. Migration-from-zero pada SQLite disposable database.
 4. Pint.
 5. Larastan stage transitional.

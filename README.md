@@ -202,7 +202,7 @@ Dokumentasi:
 
 ## P4 modernization
 
-Source sudah dipersiapkan untuk transisi **PHP 8.4/8.5 → Laravel 13 → Vite 8 → Filament 5/Livewire 4** tanpa memalsukan lockfile. Baseline lockfile P3 tetap dipertahankan sampai dependency resolver dijalankan pada mesin yang mempunyai akses Packagist/npm.
+Source sudah dipersiapkan untuk modernisasi tanpa memalsukan lockfile. Saat ini lockfile mendukung runner PHP 8.3/8.4; jangan menaikkan CI ke PHP 8.5 sebelum dependency resolver menghasilkan graph yang kompatibel.
 
 Pre-check:
 
@@ -329,7 +329,7 @@ Lihat [Production Hardening](docs/PRODUCTION-HARDENING.md) dan [ASVS Mapping](do
 
 ## GitHub Actions CI
 
-The repository includes `.github/workflows/ci.yml` for automated project testing on GitHub: PHP 8.4/8.5, MySQL 8.4 integration, frontend build/security audit, and Playwright Chromium/Firefox/WebKit/mobile. The final `CI Green Gate` only passes when every mandatory job succeeds. See `docs/GITHUB-CI.md`.
+The repository includes `.github/workflows/ci.yml` for automated project testing on GitHub: PHP 8.3/8.4, MySQL 8.4 integration, frontend build/security audit, and Playwright Chromium/Firefox/WebKit/mobile. The final `CI Green Gate` only passes when every mandatory job succeeds. See `docs/GITHUB-CI.md`.
 
 ## Testing & quality gate
 

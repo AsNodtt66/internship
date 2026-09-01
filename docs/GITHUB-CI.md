@@ -5,7 +5,7 @@ Project testing on GitHub is driven by `.github/workflows/ci.yml`. No staging or
 ## Mandatory gates
 
 1. PHP syntax, Pint, project source audits, and `composer audit`.
-2. PHPUnit on PHP 8.4 and PHP 8.5 using SQLite for the fast suite.
+2. PHPUnit on PHP 8.3 and PHP 8.4 using SQLite for the fast suite. These are the supported range of the locked dependency graph.
 3. MySQL 8.4 migration-from-zero, performance/index verification, and the PHPUnit suite.
 4. `npm ci`, production Vite build, and `npm audit --audit-level=high`.
 5. PHP coverage dengan PCOV dan artefak Clover, HTML, serta teks.

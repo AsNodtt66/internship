@@ -17,7 +17,7 @@ Jangan mengedit versi di lockfile secara manual.
 
 | Layer | Baseline P3 | Target P4 |
 |---|---|---|
-| PHP | 8.2+, CI 8.4/8.5 | **8.4+**, 8.5 direkomendasikan |
+| PHP | 8.2+, CI 8.3/8.4 | **8.4+**, setelah dependency graph kompatibel |
 | Laravel | 12.x | **13.x** |
 | Filament | 4.x | **5.x** |
 | Livewire | 3.x transitif | **4.x** transitif Filament 5 |
@@ -27,7 +27,7 @@ Jangan mengedit versi di lockfile secara manual.
 
 ## Requirement workstation
 
-- PHP 8.4 atau 8.5.
+- PHP 8.4. Jangan gunakan PHP 8.5 sebelum dependency resolver membuktikan graph yang kompatibel.
 - Composer 2.x.
 - Node.js **22.12+** direkomendasikan. Vite 8 juga mendukung Node 20.19+.
 - npm.

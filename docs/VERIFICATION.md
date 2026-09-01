@@ -87,7 +87,7 @@ P3 menambahkan tests untuk:
 `.gitlab-ci.yml` mengotomasi:
 
 - environment doctor + PHP syntax/application bootstrap;
-- PHP 8.4 / PHP 8.5 test matrix;
+- PHP 8.3 / PHP 8.4 test matrix;
 - Pint;
 - migration-from-zero;
 - route/scheduler bootstrap;

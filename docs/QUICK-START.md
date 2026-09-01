@@ -1,7 +1,7 @@
 # Quick Start
 
 
-> **P4:** untuk menjalankan modernisasi dependency, gunakan PHP 8.4/8.5 dan Node 22.12+ lalu ikuti [P4 Modernization](P4-MODERNIZATION.md). Baseline P3 tetap dapat di-install dari lockfile yang disertakan.
+> **P4:** gunakan PHP 8.3/8.4 dan Node 22.12+ untuk lockfile saat ini. Ikuti [P4 Modernization](P4-MODERNIZATION.md) hanya setelah dependency resolver menghasilkan graph yang mendukung target baru.
 
 Tujuan dokumen ini: membawa developer dari source code bersih sampai aplikasi berjalan tanpa perlu mengetahui seluruh arsitektur terlebih dahulu.
 

@@ -130,7 +130,7 @@ Job `ci_green_gate` hanya berjalan bila seluruh mandatory job berikut berhasil:
 
 ```text
 syntax_and_bootstrap
-backend_tests PHP 8.4/8.5
+backend_tests PHP 8.3/8.4
 migration_from_zero
 mysql_integration
 performance_regression

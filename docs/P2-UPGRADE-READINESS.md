@@ -15,7 +15,7 @@ Tailwind CSS       : 4.3.3
 
 ## Runtime target
 
-CI menguji PHP 8.4 dan PHP 8.5. Untuk production baru, PHP 8.4 adalah baseline konservatif; PHP 8.5 dapat dipakai setelah semua integration tests lulus pada infrastructure target.
+CI menguji PHP 8.3 dan PHP 8.4, yaitu rentang yang didukung lockfile saat ini. PHP 8.5 baru boleh dipakai setelah dependency resolver dan seluruh integration test membuktikan kompatibilitasnya.
 
 `composer.json` masih mempertahankan `php: ^8.2` agar lockfile inherited tidak diubah secara manual. Naikkan constraint hanya melalui Composer pada branch upgrade dan commit lockfile hasil resolver.
 

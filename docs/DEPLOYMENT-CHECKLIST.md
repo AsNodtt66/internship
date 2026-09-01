@@ -25,7 +25,7 @@ Sebelum production:
 - [ ] `QUEUE_AFTER_COMMIT=true` kecuali ada alasan teruji untuk menonaktifkannya.
 - [ ] `queue:monitor` threshold sesuai kapasitas.
 - [ ] restore drill terakhir terdokumentasi dan berhasil.
-- [ ] CI backend PHP 8.4/8.5, migration-from-zero, Pint, dan frontend build hijau.
+- [ ] CI backend PHP 8.3/8.4, migration-from-zero, Pint, dan frontend build hijau.
 - [ ] Larastan/npm audit findings sudah ditinjau sebelum mengubah stage menjadi blocking.
 
 ## P3 security & release gates
